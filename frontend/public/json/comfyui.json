@@ -1,28 +1,28 @@
 {
-    "name": "AppName",
-    "slug": "appname",
+    "name": "ComfyUI",
+    "slug": "comfyui",
     "categories": [
-        0
+        20
     ],
-    "date_created": "DATE CREATED",
+    "date_created": "2025-08-01",
     "type": "ct",
     "updateable": true,
     "privileged": false,
-    "interface_port": DEFAULT-PORT,
-    "documentation": null,
-    "website": "LINK TO WEBSITE",
-    "logo": "LINK TO LOGO",
-    "description": "Description of the app",
+    "interface_port": 80,
+    "documentation": https://github.com/comfyanonymous/ComfyUI,
+    "website": "https://www.comfy.org/",
+    "logo": "https://framerusercontent.com/images/3cNQMWKzIhIrQ5KErBm7dSmbd2w.png",
+    "description": "ComfyUI is a node-based interface and inference engine for generative AI. Users can combine various AI models and operations through nodes to achieve highly customizable and controllable content generation. ComfyUI is completely open source and can run on your local device",
     "install_methods": [
         {
             "type": "default",
-            "script": "ct/AppName.sh",
+            "script": "ct/comfyui.sh",
             "resources": {
-                "cpu": 2,
-                "ram": 2048,
-                "hdd": 4,
-                "os": "debian",
-                "version": "12"
+                "cpu": 4,
+                "ram": 8192,
+                "hdd": 25,
+                "os": "Ubuntu",
+                "version": "24.04"
             }
         }
     ],

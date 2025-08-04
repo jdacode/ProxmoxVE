@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # Copyright (c) 2021-2025 community-scripts ORG
-# Author: [YourUserName]
+# Author: jdacode
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: [SOURCE_URL]
+# Source: https://github.com/comfyanonymous/ComfyUI
 
 # Import Functions und Setup
 source /dev/stdin <<<"$FUNCTIONS_FILE_PATH"
@@ -14,38 +14,22 @@ setting_up_container
 network_check
 update_os
 
-# Installing Dependencies
-msg_info "Installing Dependencies"
-$STD apt-get install -y \
-  [PACKAGE_1] \
-  [PACKAGE_2] \
-  [PACKAGE_3]
-msg_ok "Installed Dependencies"
+# Installs uv
+msg_info "Setup uv"
+PYTHON_VERSION="3.12" setup_uv
+msg_ok "Setup uv"
 
-# Template: MySQL Database
-msg_info "Setting up Database"
-DB_NAME=[DB_NAME]
-DB_USER=[DB_USER]
-DB_PASS=$(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | head -c13)
-$STD mysql -u root -e "CREATE DATABASE $DB_NAME;"
-$STD mysql -u root -e "CREATE USER '$DB_USER'@'localhost' IDENTIFIED WITH mysql_native_password AS PASSWORD('$DB_PASS');"
-$STD mysql -u root -e "GRANT ALL ON $DB_NAME.* TO '$DB_USER'@'localhost'; FLUSH PRIVILEGES;"
-{
-  echo "${APPLICATION} Credentials"
-  echo "Database User: $DB_USER"
-  echo "Database Password: $DB_PASS"
-  echo "Database Name: $DB_NAME"
-} >>~/"$APP_NAME".creds
-msg_ok "Set up Database"
 
 # Setup App
 msg_info "Setup ${APPLICATION}"
-RELEASE=$(curl -fsSL https://api.github.com/repos/[REPO]/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3) }')
-curl -fsSL -o "${RELEASE}.zip" "https://github.com/[REPO]/archive/refs/tags/${RELEASE}.zip"
+RELEASE=$(curl -fsSL https://api.github.com/repos/comfyanonymous/ComfyUI/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3) }')
+curl -fsSL -o "${RELEASE}.zip" "https://github.com/comfyanonymous/ComfyUI/archive/refs/tags/${RELEASE}.zip"
 unzip -q "${RELEASE}.zip"
 mv "${APPLICATION}-${RELEASE}/" "/opt/${APPLICATION}"
+$STD uv venv "/opt/${APPLICATION}/venv"
+$STD uv pip install -r "/opt/${APPLICATION}/requirements.txt" --python="/opt/${APPLICATION}/venv/bin/python"
 #
-#
+# 
 #
 echo "${RELEASE}" >/opt/"${APPLICATION}"_version.txt
 msg_ok "Setup ${APPLICATION}"
@@ -58,8 +42,11 @@ Description=${APPLICATION} Service
 After=network.target
 
 [Service]
-ExecStart=[START_COMMAND]
-Restart=always
+Type=simple
+User=root
+WorkingDirectory=/opt/ComfyUI
+ExecStart=/opt/${APPLICATION}/venv/bin/python /opt/ComfyUI/main.py --port 80 --listen
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

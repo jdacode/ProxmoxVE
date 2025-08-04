@@ -1,27 +1,27 @@
 #!/usr/bin/env bash
-source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func)
+source <(curl -fsSL https://raw.githubusercontent.com/jdacode/ProxmoxVE/refs/head/comfyui/misc/build.func)
 # Copyright (c) 2021-2025 community-scripts ORG
-# Author: [YourUserName]
+# Author: jdacode
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: [SOURCE_URL]
+# Source: https://github.com/comfyanonymous/ComfyUI
 
 # App Default Values
 # Name of the app (e.g. Google, Adventurelog, Apache-Guacamole"
-APP="[APP_NAME]"
+APP="ComfyUI"
 # Tags for Proxmox VE, maximum 2 pcs., no spaces allowed, separated by a semicolon ; (e.g. database | adblock;dhcp)
-var_tags="${var_tags:-[TAGS]}"
+var_tags="${var_tags:-ai}"
 # Number of cores (1-X) (e.g. 4) - default are 2
-var_cpu="${var_cpu:-[CPU]}"
+var_cpu="${var_cpu:-4}"
 # Amount of used RAM in MB (e.g. 2048 or 4096)
-var_ram="${var_ram:-[RAM]}"
+var_ram="${var_ram:-8192}"
 # Amount of used disk space in GB (e.g. 4 or 10)
-var_disk="${var_disk:-[DISK]}"
+var_disk="${var_disk:-25}"
 # Default OS (e.g. debian, ubuntu, alpine)
-var_os="${var_os:-[OS]}"
+var_os="${var_os:-ubuntu}"
 # Default OS version (e.g. 12 for debian, 24.04 for ubuntu, 3.20 for alpine)
-var_version="${var_version:-[VERSION]}"
+var_version="${var_version:-24.04}"
 # 1 = unprivileged container, 0 = privileged container
-var_unprivileged="${var_unprivileged:-[UNPRIVILEGED]}"
+var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
 variables
@@ -34,45 +34,11 @@ function update_script() {
   check_container_resources
 
   # Check if installation is present | -f for file, -d for folder
-  if [[ ! -f [INSTALLATION_CHECK_PATH] ]]; then
+  if [[ ! -f /opt/ComfyUI ]]; then
     msg_error "No ${APP} Installation Found!"
     exit
   fi
-
-  # Crawling the new version and checking whether an update is required
-  RELEASE=$(curl -fsSL [RELEASE_URL] | [PARSE_RELEASE_COMMAND])
-  if [[ "${RELEASE}" != "$(cat /opt/${APP}_version.txt)" ]] || [[ ! -f /opt/${APP}_version.txt ]]; then
-    # Stopping Services
-    msg_info "Stopping $APP"
-    systemctl stop [SERVICE_NAME]
-    msg_ok "Stopped $APP"
-
-    # Creating Backup
-    msg_info "Creating Backup"
-    tar -czf "/opt/${APP}_backup_$(date +%F).tar.gz" [IMPORTANT_PATHS]
-    msg_ok "Backup Created"
-
-    # Execute Update
-    msg_info "Updating $APP to v${RELEASE}"
-    [UPDATE_COMMANDS]
-    msg_ok "Updated $APP to v${RELEASE}"
-
-    # Starting Services
-    msg_info "Starting $APP"
-    systemctl start [SERVICE_NAME]
-    msg_ok "Started $APP"
-
-    # Cleaning up
-    msg_info "Cleaning Up"
-    rm -rf [TEMP_FILES]
-    msg_ok "Cleanup Completed"
-
-    # Last Action
-    echo "${RELEASE}" >/opt/${APP}_version.txt
-    msg_ok "Update Successful"
-  else
-    msg_ok "No update required. ${APP} is already at v${RELEASE}"
-  fi
+  msg_error "To update use the ComfyUI Manager."
   exit
 }
 
