@@ -8,11 +8,11 @@
 # Import Functions und Setup
 source /dev/stdin <<<"$FUNCTIONS_FILE_PATH"
 color
-# verb_ip6
-# catch_errors
-# setting_up_container
-# network_check
-# update_os
+verb_ip6
+catch_errors
+setting_up_container
+network_check
+update_os
 
 GPU="None"
 GPU_TYPE="None\nNVIDIA\nAMD\nIntel"
