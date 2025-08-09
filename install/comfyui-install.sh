@@ -95,20 +95,20 @@ echo
 while true; do
   echo
   echo
-  read -rp "${TAB3}Do you want to keep this configuration? [Y/n]: " CONFIG_CONFIRM
+  read -rp "${TAB3}${TAB3}Do you want to keep this configuration? [Y/n]: " CONFIG_CONFIRM
   CONFIG_CONFIRM=${CONFIG_CONFIRM:-y}
 
   case "$CONFIG_CONFIRM" in
     [Yy])
-      echo "${TAB3}Configuration accepted."
+      echo "${TAB3}${TAB3}Configuration accepted."
       break
       ;;
     [Nn])
-      echo "${TAB3}Switching to advanced configuration..."
+      echo "${TAB3}${TAB3}Switching to advanced configuration..."
       break
       ;;
     *)
-      echo "${TAB3}Please enter Y (yes) or N (no)."
+      echo "${TAB3}${TAB3}Please enter Y (yes) or N (no)."
       ;;
   esac
 done
@@ -122,7 +122,8 @@ if [[ "$CONFIG_CONFIRM" == "n" ]]; then
     echo "${TAB3}=============================================================="
     echo
     echo
-    echo "${TAB3}Choose the GPU type for ComfyUI:"
+    echo "${TAB3}${TAB3}Choose the GPU type for ComfyUI:"
+    echo "${TAB3}${TAB3}-------------------------------"
     echo "${TAB3}${TAB3}${TAB3}  1) None   (default)"
     echo "${TAB3}${TAB3}${TAB3}  2) NVIDIA"
     echo "${TAB3}${TAB3}${TAB3}  3) AMD"
@@ -130,7 +131,7 @@ if [[ "$CONFIG_CONFIRM" == "n" ]]; then
     echo
 
     echo
-    read -rp "${TAB3}Enter your choice [1-4] (default: 1): " GPU_CHOICE
+    read -rp "${TAB3}${TAB3}Enter your choice [1-4] (default: 1): " GPU_CHOICE
     GPU_CHOICE=${GPU_CHOICE:-1}
 
     case "$GPU_CHOICE" in
@@ -138,22 +139,19 @@ if [[ "$CONFIG_CONFIRM" == "n" ]]; then
       2) gpu_type="nvidia" ;;
       3) gpu_type="amd" ;;
       4) gpu_type="intel" ;;
-      *) echo "${TAB3}Invalid choice. Please enter a number between 1 and 4."; continue ;;
+      *) echo "${TAB3}${TAB3}Invalid choice. Please enter a number between 1 and 4."; continue ;;
     esac
 
-    read -rp "${TAB3}Enter ComfyUI version [default: ${comfyui_version}]: " input_version
+    read -rp "${TAB3}${TAB3}Enter ComfyUI version [default: ${comfyui_version}]: " input_version
     comfyui_version=${input_version:-$comfyui_version}
 
-    read -rp "${TAB3}Enter Python version (uv) [default: ${python_version_uv}]: " input_python
+    read -rp "${TAB3}${TAB3}Enter Python version (uv) [default: ${python_version_uv}]: " input_python
     python_version_uv=${input_python:-$python_version_uv}
 
-    read -rp "${TAB3}Enter application name [default: ${application_name}]: " input_app
-    application_name=${input_app:-$application_name}
-
-    read -rp "${TAB3}Enter port number [default: ${port_arg}]: " input_port
+    read -rp "${TAB3}${TAB3}Enter port number [default: ${port_arg}]: " input_port
     port_arg=${input_port:-$port_arg}
 
-    read -rp "${TAB3}Enter ComfyUI arguments [default: ${comfyui_python_args}]: " input_args
+    read -rp "${TAB3}${TAB3}Enter ComfyUI arguments [default: ${comfyui_python_args}]: " input_args
     comfyui_python_args=${input_args:-$comfyui_python_args}
     
     break
@@ -173,63 +171,60 @@ echo -e "${CM}${BOLD}${DGN}Port                : ${BGN}${port_arg}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI arguments   : ${BGN}${comfyui_python_args}${CL}"
 
 
+# Installs uv
+msg_info "Setup uv"
+PYTHON_VERSION="${python_version_uv}" setup_uv
+msg_ok "Setup uv"
 
 
+# Setup App
+msg_info "Setup ${application_name}"
 
-# # Installs uv
-# msg_info "Setup uv"
-# PYTHON_VERSION="${python_version_uv}" setup_uv
-# msg_ok "Setup uv"
+if [[ "$comfyui_version" == "latest" ]]; then
+  echo "Version is set to 'latest'; skipping version check."
+  RELEASE=$(curl -fsSL https://api.github.com/repos/comfyanonymous/ComfyUI/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3) }')
+else
+  RELEASE="$comfyui_version"
+fi
+msg_ok "Setup ${application_name}"
 
+msg_info "Installing ComfyUI version ${comfyui_version}"
+curl -fsSL -o "${application_name}.zip" "https://api.github.com/repos/comfyanonymous/ComfyUI/zipball/${RELEASE}"
+unzip -q "${application_name}.zip"
+# Remove v
+CLEAN_RELEASE="${RELEASE//v/}"
+# Move app to opt
+mv "${application_name}-${CLEAN_RELEASE}/" "/opt/${application_name}"
+$STD uv venv "/opt/${application_name}/venv"
+$STD uv pip install -r "/opt/${application_name}/requirements.txt" --python="/opt/${application_name}/venv/bin/python"
+#
+# 
+#
+echo "${RELEASE}" >/opt/"${application_name}"_version.txt
+msg_ok "Installed ComfyUI version ${comfyui_version}"
 
-# # Setup App
-# msg_info "Setup ${application_name}"
+# Creating Service (if needed)
+msg_info "Creating Service"
+cat <<EOF >/etc/systemd/system/"${application_name}".service
+[Unit]
+Description=${application_name} Service
+After=network.target
 
-# if [[ "$comfyui_version" == "latest" ]]; then
-#   echo "Version is set to 'latest'; skipping version check."
-#   RELEASE=$(curl -fsSL https://api.github.com/repos/comfyanonymous/ComfyUI/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3) }')
-# else
-#   RELEASE="$comfyui_version"
-# fi
-# msg_ok "Setup ${application_name}"
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/${application_name}
+ExecStart=/opt/${application_name}/venv/bin/python /opt/${application_name}/main.py ${comfyui_python_args} --listen
+Restart=on-failure
 
-# msg_info "Installing ComfyUI version ${comfyui_version}"
-# curl -fsSL -o "${application_name}.zip" "https://github.com/comfyanonymous/ComfyUI/archive/refs/tags/${RELEASE}.zip"
-# unzip -q "${application_name}.zip"
-# # Remove v
-# CLEAN_RELEASE="${RELEASE//v/}"
-# # Move app to opt
-# mv "${application_name}-${CLEAN_RELEASE}/" "/opt/${application_name}"
-# $STD uv venv "/opt/${application_name}/venv"
-# $STD uv pip install -r "/opt/${application_name}/requirements.txt" --python="/opt/${application_name}/venv/bin/python"
-# #
-# # 
-# #
-# echo "${RELEASE}" >/opt/"${application_name}"_version.txt
-# msg_ok "Installed ComfyUI version ${comfyui_version}"
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl enable -q --now "${application_name}"
+msg_ok "Created Service"
 
-# # Creating Service (if needed)
-# msg_info "Creating Service"
-# cat <<EOF >/etc/systemd/system/"${application_name}".service
-# [Unit]
-# Description=${application_name} Service
-# After=network.target
-
-# [Service]
-# Type=simple
-# User=root
-# WorkingDirectory=/opt/${application_name}
-# ExecStart=/opt/${application_name}/venv/bin/python /opt/${application_name}/main.py ${comfyui_python_args} --listen
-# Restart=on-failure
-
-# [Install]
-# WantedBy=multi-user.target
-# EOF
-# systemctl enable -q --now "${application_name}"
-# msg_ok "Created Service"
-
-# motd_ssh
-# customize
+motd_ssh
+customize
 
 # Cleanup
 msg_info "Cleaning up"
