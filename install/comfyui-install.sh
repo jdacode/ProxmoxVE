@@ -5,6 +5,12 @@
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
 # Source: https://github.com/comfyanonymous/ComfyUI
 
+comfyui_settings() {
+  msg_info "Method2: ${METHOD}"
+  whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Here is an instructional tip:" "To make a selection, use the Spacebar." 8 58
+}
+
+
 # Import Functions und Setup
 source /dev/stdin <<<"$FUNCTIONS_FILE_PATH"
 color
@@ -16,7 +22,7 @@ update_os
 
 
 msg_info "Method: ${METHOD}"
-advanced_settings
+comfyui_settings
 
 # GPU Selection
 while true; do
@@ -107,7 +113,3 @@ $STD apt-get -y autoclean
 msg_ok "Cleaned"
 
 
-advanced_settings() {
-  msg_info "Method2: ${METHOD}"
-  whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Here is an instructional tip:" "To make a selection, use the Spacebar." 8 58
-}
