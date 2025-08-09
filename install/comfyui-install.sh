@@ -23,7 +23,7 @@ msg_info "GPU: ${GPU_TYPE}"
 
 # GPU Selection
 while true; do
-  GPU=$(whiptail --backtitle "Proxmox VE Helper Scripts" --menu \
+  GPU=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "ComfyUI Configuration" --menu \
     "Select GPU Type:" 15 58 4 \
     "none" "None (recommended, default)" \
     "nvidia" "NVIDIA" \
