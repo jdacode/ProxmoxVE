@@ -15,7 +15,6 @@ network_check
 # update_os
 
 
-
 # Default configuration variables
 whiptail_backtitle="Proxmox VE Helper Scripts"
 whiptail_title="ComfyUI Configuration"
@@ -26,7 +25,8 @@ application_name="${APPLICATION}"
 port_arg="8080"
 comfyui_python_args="--port ${port_arg}"
 
-msg_info "Starting ${application_name} installation"
+msg_info "Configuring ${application_name}"
+
 
 ##########################################
 # CONFIG_SUMMARY="\
@@ -155,8 +155,7 @@ done
 
 
 
-
-
+msg_ok "Configured ${application_name}"
 
 
 
@@ -175,6 +174,7 @@ done
 # else
 #   RELEASE="$comfyui_version"
 # fi
+# msg_ok "Setup ${application_name}"
 
 # msg_info "Installing ComfyUI version ${comfyui_version}"
 # curl -fsSL -o "${application_name}.zip" "https://github.com/comfyanonymous/ComfyUI/archive/refs/tags/${RELEASE}.zip"
@@ -189,7 +189,7 @@ done
 # # 
 # #
 # echo "${RELEASE}" >/opt/"${application_name}"_version.txt
-# msg_ok "Setup ${application_name}"
+# msg_ok "Installed ComfyUI version ${comfyui_version}"
 
 # # Creating Service (if needed)
 # msg_info "Creating Service"
