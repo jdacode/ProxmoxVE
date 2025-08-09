@@ -15,11 +15,7 @@ network_check
 update_os
 
 
-GPU="None"
-GPU_TYPE="None\nNVIDIA\nAMD\nIntel"
-
-msg_info "GPU: ${GPU}"
-msg_info "GPU: ${GPU_TYPE}"
+advanced_settings
 
 # GPU Selection
 while true; do
@@ -108,3 +104,8 @@ rm -f "${APPLICATION}".zip
 $STD apt-get -y autoremove
 $STD apt-get -y autoclean
 msg_ok "Cleaned"
+
+
+advanced_settings() {
+  whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Here is an instructional tip:" "To make a selection, use the Spacebar." 8 58
+}
