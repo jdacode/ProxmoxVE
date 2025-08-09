@@ -5,14 +5,36 @@
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
 # Source: https://github.com/comfyanonymous/ComfyUI
 
+
+custom_install_script() {
+  GPU_TYPE=""
+  GPU_TYPE="None\nNVIDIA\nAMD\nIntel"
+
+  msg_info "GPU: ${GPU_TYPE}"
+  exit_script
+
+  if [[ -z "$GPU_TYPE" ]]; then
+    GPU="None"
+    echo -e "${CREATING}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+  else
+    GPU=$(whiptail --backtitle "Proxmox VE Helper Scripts" --menu "Select GPU Type:" 15 40 6 $(echo "$GPU_TYPE" | awk '{print $0}') 3>&1 1>&2 2>&3)
+    if [ -z "$GPU" ]; then
+      exit_script
+    else
+      echo -e "${CREATING}${BOLD}${DGN}Bridge: ${BGN}$GPU${CL}"
+    fi
+  fi
+}
+
+
 # Import Functions und Setup
 source /dev/stdin <<<"$FUNCTIONS_FILE_PATH"
 color
-verb_ip6
-catch_errors
-setting_up_container
-network_check
-update_os
+# verb_ip6
+# catch_errors
+# setting_up_container
+# network_check
+# update_os
 
 custom_install_script
 
@@ -71,22 +93,4 @@ custom_install_script
 
 
 
-custom_install_script() {
-  GPU_TYPE=""
-  GPU_TYPE="None\nNVIDIA\nAMD\nIntel"
 
-  msg_info "GPU: ${GPU_TYPE}"
-  exit_script
-
-  if [[ -z "$GPU_TYPE" ]]; then
-    GPU="None"
-    echo -e "${CREATING}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
-  else
-    GPU=$(whiptail --backtitle "Proxmox VE Helper Scripts" --menu "Select GPU Type:" 15 40 6 $(echo "$GPU_TYPE" | awk '{print $0}') 3>&1 1>&2 2>&3)
-    if [ -z "$GPU" ]; then
-      exit_script
-    else
-      echo -e "${CREATING}${BOLD}${DGN}Bridge: ${BGN}$GPU${CL}"
-    fi
-  fi
-}
