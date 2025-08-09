@@ -25,13 +25,14 @@ PORT="8080"
 COMFYUI_PYTHON_ARGS="--port ${PORT}"
 
 CONFIG_SUMMARY="\
-  Default Configuration:
-  COMFYUI_VERSION: ${COMFYUI_VERSION}
-  GPU: ${GPU}
-  PYTHON_VERSION_UV: ${PYTHON_VERSION_UV}
-  APPLICATION_NAME: ${APPLICATION_NAME}
-  PORT: ${PORT}
-  COMFYUI_PYTHON_ARGS: ${COMFYUI_PYTHON_ARGS}"
+Default configuration:
+
+  ComfyUI version     : ${COMFYUI_VERSION}
+  GPU                 : ${GPU}
+  Python version (uv) : ${PYTHON_VERSION_UV}
+  Application name    : ${APPLICATION_NAME}
+  ComfyUI arguments   : ${COMFYUI_PYTHON_ARGS}"
+
 
 whiptail --backtitle "${WHIPTAIL_BACKTITLE}" \
          --title "${WHIPTAIL_TITLE}" \
