@@ -25,7 +25,7 @@ application_name="${APPLICATION}"
 port_arg="8080"
 comfyui_python_args="--port ${port_arg}"
 
-msg_info "Configuring ${application_name}"
+msg_info "Installation ${application_name}"
 
 
 ##########################################
@@ -112,7 +112,7 @@ while true; do
       ;;
   esac
 done
-
+msg_ok "Installation ${application_name}"
 
 msg_info "Advanced configuration"
 CONFIG_CONFIRM=${CONFIG_CONFIRM,,}
@@ -167,7 +167,7 @@ msg_ok "Advanced configuration"
 
 
 
-msg_ok "Configured ${application_name}"
+
 echo -e "${CM}${BOLD}${DGN}Backtitle           : ${BGN}${whiptail_backtitle}${CL}"
 echo -e "${CM}${BOLD}${DGN}Title               : ${BGN}${whiptail_title}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI version     : ${BGN}${comfyui_version}${CL}"
