@@ -15,6 +15,7 @@ network_check
 update_os
 
 
+msg_info "Method: ${METHOD}"
 advanced_settings
 
 # GPU Selection
@@ -107,5 +108,6 @@ msg_ok "Cleaned"
 
 
 advanced_settings() {
+  msg_info "Method2: ${METHOD}"
   whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Here is an instructional tip:" "To make a selection, use the Spacebar." 8 58
 }
