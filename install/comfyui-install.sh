@@ -25,7 +25,7 @@ msg_info "Setup ${APPLICATION}"
 RELEASE=$(curl -fsSL https://api.github.com/repos/comfyanonymous/ComfyUI/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3) }')
 curl -fsSL -o "${APPLICATION}.zip" "https://github.com/comfyanonymous/ComfyUI/archive/refs/tags/${RELEASE}.zip"
 unzip -q "${APPLICATION}.zip"
-mv "${APPLICATION}/" "/opt/${APPLICATION}"
+mv "${APPLICATION}" "/opt/"
 $STD uv venv "/opt/${APPLICATION}/venv"
 $STD uv pip install -r "/opt/${APPLICATION}/requirements.txt" --python="/opt/${APPLICATION}/venv/bin/python"
 #
