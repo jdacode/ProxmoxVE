@@ -14,8 +14,6 @@ setting_up_container
 network_check
 update_os
 
-echo -e "${CM}${BOLD}${DGN}METHOD: ${BGN}$METHOD${CL}"
-
 # Default configuration variables
 WHIPTAIL_BACKTITLE="Proxmox VE Helper Scripts"
 WHIPTAIL_TITLE="ComfyUI Configuration"
