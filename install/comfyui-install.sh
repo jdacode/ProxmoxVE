@@ -12,7 +12,7 @@ verb_ip6
 catch_errors
 setting_up_container
 network_check
-update_os
+# update_os
 
 # Default configuration variables
 WHIPTAIL_BACKTITLE="Proxmox VE Helper Scripts"
