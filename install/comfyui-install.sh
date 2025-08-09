@@ -79,23 +79,23 @@ msg_info "Configuring ${application_name}"
 ##########################################
 
 echo
-echo "=============================================================="
+echo "${TAB3}=============================================================="
 echo
 echo
-echo "${TAB3}Default configuration summary:"
-echo "${TAB3}-------------------------------"
-echo "${TAB3}${TAB3}ComfyUI version     : ${comfyui_version}"
-echo "${TAB3}${TAB3}GPU                 : ${gpu_type}"
-echo "${TAB3}${TAB3}Python version (uv) : ${python_version_uv}"
-echo "${TAB3}${TAB3}Application name    : ${application_name}"
-echo "${TAB3}${TAB3}Port                : ${port_arg}"
-echo "${TAB3}${TAB3}ComfyUI arguments   : ${comfyui_python_args}"
+echo "${TAB3}${TAB3}Default configuration summary:"
+echo "${TAB3}${TAB3}-------------------------------"
+echo "${TAB3}${TAB3}${TAB3}ComfyUI version     : ${comfyui_version}"
+echo "${TAB3}${TAB3}${TAB3}GPU                 : ${gpu_type}"
+echo "${TAB3}${TAB3}${TAB3}Python version (uv) : ${python_version_uv}"
+echo "${TAB3}${TAB3}${TAB3}Application name    : ${application_name}"
+echo "${TAB3}${TAB3}${TAB3}Port                : ${port_arg}"
+echo "${TAB3}${TAB3}${TAB3}ComfyUI arguments   : ${comfyui_python_args}"
 echo
 
 while true; do
   echo
   echo
-  read -rp "${TAB3}Do you want to keep this configuration? (y/n) [Y]: " CONFIG_CONFIRM
+  read -rp "${TAB3}Do you want to keep this configuration? [Y/n]: " CONFIG_CONFIRM
   CONFIG_CONFIRM=${CONFIG_CONFIRM:-y}
 
   case "$CONFIG_CONFIRM" in
@@ -114,48 +114,70 @@ while true; do
 done
 
 
-while true; do
-  echo
-  echo "=============================================================="
-  echo
-  echo
-  echo "${TAB3}Choose the GPU type for ComfyUI:"
-  echo "${TAB3}${TAB3}  1) None   (recommended, default)"
-  echo "${TAB3}${TAB3}  2) NVIDIA"
-  echo "${TAB3}${TAB3}  3) AMD"
-  echo "${TAB3}${TAB3}  4) Intel"
-  echo
+msg_info "Advanced configuration"
+CONFIG_CONFIRM=${CONFIG_CONFIRM,,}
+if [[ "$CONFIG_CONFIRM" == "y" ]]; then
+  while true; do
+    echo
+    echo "${TAB3}=============================================================="
+    echo
+    echo
+    echo "${TAB3}Choose the GPU type for ComfyUI:"
+    echo "${TAB3}${TAB3}${TAB3}  1) None   (default)"
+    echo "${TAB3}${TAB3}${TAB3}  2) NVIDIA"
+    echo "${TAB3}${TAB3}${TAB3}  3) AMD"
+    echo "${TAB3}${TAB3}${TAB3}  4) Intel"
+    echo
 
-  echo
-  read -rp "${TAB3}Enter your choice [1-4] (default: 1): " GPU_CHOICE
-  GPU_CHOICE=${GPU_CHOICE:-1}
+    echo
+    read -rp "${TAB3}Enter your choice [1-4] (default: 1): " GPU_CHOICE
+    GPU_CHOICE=${GPU_CHOICE:-1}
 
-  case "$GPU_CHOICE" in
-    1)
-      GPU="none"
-      ;;
-    2)
-      GPU="nvidia"
-      ;;
-    3)
-      GPU="amd"
-      ;;
-    4)
-      GPU="intel"
-      ;;
-    *)
-      echo "${TAB3}Invalid choice. Please enter a number between 1 and 4."
-      continue
-      ;;
-  esac
+    case "$GPU_CHOICE" in
+      1) gpu_type="none" ;;
+      2) gpu_type="nvidia" ;;
+      3) gpu_type="amd" ;;
+      4) gpu_type="intel" ;;
+      *) echo "${TAB3}Invalid choice. Please enter a number between 1 and 4."; continue ;;
+    esac
 
-  echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}${gpu_type}${CL}"
-  break
-done
+    read -rp "${TAB3}Enter ComfyUI version [default: ${comfyui_version}]: " input_version
+    comfyui_version=${input_version:-$comfyui_version}
+
+    read -rp "${TAB3}Enter Python version (uv) [default: ${python_version_uv}]: " input_python
+    python_version_uv=${input_python:-$python_version_uv}
+
+    read -rp "${TAB3}Enter application name [default: ${application_name}]: " input_app
+    application_name=${input_app:-$application_name}
+
+    read -rp "${TAB3}Enter port number [default: ${port_arg}]: " input_port
+    port_arg=${input_port:-$port_arg}
+
+    read -rp "${TAB3}Enter ComfyUI arguments [default: ${comfyui_python_args}]: " input_args
+    comfyui_python_args=${input_args:-$comfyui_python_args}
+    
+    break
+  done
+
+
+fi
+msg_ok "Advanced configuration"
+
+
 
 
 
 msg_ok "Configured ${application_name}"
+echo -e "${CM}${BOLD}${DGN}Backtitle           : ${BGN}${whiptail_backtitle}${CL}"
+echo -e "${CM}${BOLD}${DGN}Title               : ${BGN}${whiptail_title}${CL}"
+echo -e "${CM}${BOLD}${DGN}ComfyUI version     : ${BGN}${comfyui_version}${CL}"
+echo -e "${CM}${BOLD}${DGN}GPU                 : ${BGN}${gpu_type}${CL}"
+echo -e "${CM}${BOLD}${DGN}Python version (uv) : ${BGN}${python_version_uv}${CL}"
+echo -e "${CM}${BOLD}${DGN}Application name    : ${BGN}${application_name}${CL}"
+echo -e "${CM}${BOLD}${DGN}Port                : ${BGN}${port_arg}${CL}"
+echo -e "${CM}${BOLD}${DGN}ComfyUI arguments   : ${BGN}${comfyui_python_args}${CL}"
+
+
 
 
 
