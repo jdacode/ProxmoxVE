@@ -23,30 +23,31 @@ msg_info "GPU: ${GPU_TYPE}"
 
 # GPU Selection
 while true; do
-  GPU=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "ComfyUI Configuration" --menu \
+  GPU=$(whiptail --backtitle "Proxmox VE Helper Scripts" --menu \
     "Select GPU Type:" 15 58 4 \
     "none" "None (recommended, default)" \
     "nvidia" "NVIDIA" \
     "amd" "AMD" \
     "intel" "Intel" \
-    --default-item "none" 3>&1 1>&2 2>&3)
+    --default-item "none" \
+    --title "ComfyUI Configuration" 3>&1 1>&2 2>&3)
   [ $? -ne 0 ] && exit_script
 
   case "$GPU" in
   none)
-    echo -e "${CREATING}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+    echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
     break
     ;;
   nvidia)
-    echo -e "${CREATING}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+    echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
     break
     ;;
   amd)
-    echo -e "${CREATING}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+    echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
     break
     ;;
   intel)
-    echo -e "${CREATING}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+    echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
     break
     ;;
   *)
@@ -101,31 +102,9 @@ done
 # motd_ssh
 # customize
 
-# # Cleanup
-# msg_info "Cleaning up"
-# rm -f "${APPLICATION}".zip
-# $STD apt-get -y autoremove
-# $STD apt-get -y autoclean
-# msg_ok "Cleaned"
-
-
-
-custom_install_script() {
-  GPU_TYPE=""
-  GPU_TYPE="None\nNVIDIA\nAMD\nIntel"
-
-  msg_info "GPU: ${GPU_TYPE}"
-  exit_script
-
-  if [[ -z "$GPU_TYPE" ]]; then
-    GPU="None"
-    echo -e "${CREATING}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
-  else
-    GPU=$(whiptail --backtitle "Proxmox VE Helper Scripts" --menu "Select GPU Type:" 15 40 6 $(echo "$GPU_TYPE" | awk '{print $0}') 3>&1 1>&2 2>&3)
-    if [ -z "$GPU" ]; then
-      exit_script
-    else
-      echo -e "${CREATING}${BOLD}${DGN}Bridge: ${BGN}$GPU${CL}"
-    fi
-  fi
-}
+# Cleanup
+msg_info "Cleaning up"
+rm -f "${APPLICATION}".zip
+$STD apt-get -y autoremove
+$STD apt-get -y autoclean
+msg_ok "Cleaned"
