@@ -48,7 +48,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/opt/ComfyUI
-ExecStart=/opt/${APPLICATION}/venv/bin/python /opt/ComfyUI/main.py --port 80 --listen
+ExecStart=/opt/${APPLICATION}/venv/bin/python /opt/ComfyUI/main.py --port 8080 --listen
 Restart=on-failure
 
 [Install]
