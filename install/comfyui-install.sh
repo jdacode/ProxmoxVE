@@ -77,6 +77,8 @@ COMFYUI_PYTHON_ARGS="--port ${PORT}"
 ##########################################
 
 echo
+echo
+echo
 echo "${TAB3}Default configuration summary:"
 echo "${TAB3}-------------------------------"
 echo "${TAB3}ComfyUI version     : ${COMFYUI_VERSION}"
@@ -88,15 +90,17 @@ echo "${TAB3}ComfyUI arguments   : ${COMFYUI_PYTHON_ARGS}"
 echo
 
 while true; do
-  read -rp "${TAB3}Do you want to keep this configuration? [Y/n]: " CONFIG_CONFIRM
-  CONFIG_CONFIRM=${CONFIG_CONFIRM:-Y}
+  echo
+  echo
+  read -rp "${TAB3}Do you want to keep this configuration? (y/n) [Y]: " CONFIG_CONFIRM
+  CONFIG_CONFIRM=${CONFIG_CONFIRM:-y}
 
   case "$CONFIG_CONFIRM" in
-    [Yy]*)
+    [Yy])
       echo "${TAB3}Configuration accepted."
       break
       ;;
-    [Nn]*)
+    [Nn])
       echo "${TAB3}Switching to advanced configuration..."
       break
       ;;
@@ -109,6 +113,8 @@ done
 
 while true; do
   echo
+  echo
+  echo
   echo "${TAB3}Choose the GPU type for ComfyUI:"
   echo "${TAB3}  1) None   (recommended, default)"
   echo "${TAB3}  2) NVIDIA"
@@ -116,6 +122,7 @@ while true; do
   echo "${TAB3}  4) Intel"
   echo
 
+  echo
   read -rp "${TAB3}Enter your choice [1-4] (default: 1): " GPU_CHOICE
   GPU_CHOICE=${GPU_CHOICE:-1}
 
