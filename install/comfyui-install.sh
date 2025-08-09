@@ -14,35 +14,37 @@ setting_up_container
 network_check
 # update_os
 
+
+
 # Default configuration variables
-WHIPTAIL_BACKTITLE="Proxmox VE Helper Scripts"
-WHIPTAIL_TITLE="ComfyUI Configuration"
-COMFYUI_VERSION="latest"
-GPU="None"
-PYTHON_VERSION_UV="3.12"
-APPLICATION_NAME="${APPLICATION}"
-PORT="8080"
-COMFYUI_PYTHON_ARGS="--port ${PORT}"
+whiptail_backtitle="Proxmox VE Helper Scripts"
+whiptail_title="ComfyUI Configuration"
+comfyui_version="latest"
+gpu_type="None"
+python_version_uv="3.12"
+application_name="${APPLICATION}"
+port_arg="8080"
+comfyui_python_args="--port ${port_arg}"
 
-
+msg_info "Starting ${application_name} installation"
 
 ##########################################
 # CONFIG_SUMMARY="\
 # Default configuration:
 
-#   ComfyUI version     : ${COMFYUI_VERSION}
-#   GPU                 : ${GPU}
-#   Python version (uv) : ${PYTHON_VERSION_UV}
-#   Application name    : ${APPLICATION_NAME}
-#   ComfyUI python args : ${COMFYUI_PYTHON_ARGS}"
+#   ComfyUI version     : ${comfyui_version}
+#   GPU                 : ${gpu_type}
+#   Python version (uv) : ${python_version_uv}
+#   Application name    : ${application_name}
+#   ComfyUI python args : ${comfyui_python_args}"
 
-# whiptail --backtitle "${WHIPTAIL_BACKTITLE}" \
-#          --title "${WHIPTAIL_TITLE}" \
+# whiptail --backtitle "${whiptail_backtitle}" \
+#          --title "${whiptail_title}" \
 #          --msgbox "${CONFIG_SUMMARY}" 15 60
 
 # # GPU Selection
 # while true; do
-#   GPU=$(whiptail --backtitle "${WHIPTAIL_BACKTITLE}" --menu \
+#   GPU=$(whiptail --backtitle "${whiptail_backtitle}" --menu \
 #     "Select GPU Type:" 15 58 4 \
 #     "none" "None (recommended, default)" \
 #     "nvidia" "NVIDIA" \
@@ -52,21 +54,21 @@ COMFYUI_PYTHON_ARGS="--port ${PORT}"
 #     --title "ComfyUI Configuration" 3>&1 1>&2 2>&3)
 #   [ $? -ne 0 ] && exit_script
 
-#   case "$GPU" in
+#   case "${gpu_type}" in
 #   none)
-#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}${gpu_type}${CL}"
 #     break
 #     ;;
 #   nvidia)
-#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}${gpu_type}${CL}"
 #     break
 #     ;;
 #   amd)
-#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}${gpu_type}${CL}"
 #     break
 #     ;;
 #   intel)
-#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}${gpu_type}${CL}"
 #     break
 #     ;;
 #   *)
@@ -76,17 +78,17 @@ COMFYUI_PYTHON_ARGS="--port ${PORT}"
 # done
 ##########################################
 
-echo
+echo "=============================================================="
 echo
 echo
 echo "${TAB3}Default configuration summary:"
 echo "${TAB3}-------------------------------"
-echo "${TAB3}ComfyUI version     : ${COMFYUI_VERSION}"
-echo "${TAB3}GPU                 : ${GPU}"
-echo "${TAB3}Python version (uv) : ${PYTHON_VERSION_UV}"
-echo "${TAB3}Application name    : ${APPLICATION_NAME}"
+echo "${TAB3}ComfyUI version     : ${comfyui_version}"
+echo "${TAB3}GPU                 : ${gpu_type}"
+echo "${TAB3}Python version (uv) : ${python_version_uv}"
+echo "${TAB3}Application name    : ${application_name}"
 echo "${TAB3}Port                : ${PORT}"
-echo "${TAB3}ComfyUI arguments   : ${COMFYUI_PYTHON_ARGS}"
+echo "${TAB3}ComfyUI arguments   : ${comfyui_python_args}"
 echo
 
 while true; do
@@ -112,7 +114,7 @@ done
 
 
 while true; do
-  echo
+  echo "=============================================================="
   echo
   echo
   echo "${TAB3}Choose the GPU type for ComfyUI:"
@@ -145,7 +147,7 @@ while true; do
       ;;
   esac
 
-  echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+  echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}${gpu_type}${CL}"
   break
 done
 
@@ -158,53 +160,53 @@ done
 
 # # Installs uv
 # msg_info "Setup uv"
-# PYTHON_VERSION="${PYTHON_VERSION_UV}" setup_uv
+# PYTHON_VERSION="${python_version_uv}" setup_uv
 # msg_ok "Setup uv"
 
 
 # # Setup App
-# msg_info "Setup ${APPLICATION_NAME}"
+# msg_info "Setup ${application_name}"
 
-# if [[ "$COMFYUI_VERSION" == "latest" ]]; then
-#   echo "🟢 Version is set to 'latest'; skipping version check."
+# if [[ "$comfyui_version" == "latest" ]]; then
+#   echo "Version is set to 'latest'; skipping version check."
 #   RELEASE=$(curl -fsSL https://api.github.com/repos/comfyanonymous/ComfyUI/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3) }')
 # else
-#   RELEASE="$COMFYUI_VERSION"
+#   RELEASE="$comfyui_version"
 # fi
 
-# msg_info "Installing ComfyUI version ${COMFYUI_VERSION}"
-# curl -fsSL -o "${APPLICATION_NAME}.zip" "https://github.com/comfyanonymous/ComfyUI/archive/refs/tags/${RELEASE}.zip"
-# unzip -q "${APPLICATION_NAME}.zip"
+# msg_info "Installing ComfyUI version ${comfyui_version}"
+# curl -fsSL -o "${application_name}.zip" "https://github.com/comfyanonymous/ComfyUI/archive/refs/tags/${RELEASE}.zip"
+# unzip -q "${application_name}.zip"
 # # Remove v
 # CLEAN_RELEASE="${RELEASE//v/}"
 # # Move app to opt
-# mv "${APPLICATION_NAME}-${CLEAN_RELEASE}/" "/opt/${APPLICATION_NAME}"
-# $STD uv venv "/opt/${APPLICATION_NAME}/venv"
-# $STD uv pip install -r "/opt/${APPLICATION_NAME}/requirements.txt" --python="/opt/${APPLICATION_NAME}/venv/bin/python"
+# mv "${application_name}-${CLEAN_RELEASE}/" "/opt/${application_name}"
+# $STD uv venv "/opt/${application_name}/venv"
+# $STD uv pip install -r "/opt/${application_name}/requirements.txt" --python="/opt/${application_name}/venv/bin/python"
 # #
 # # 
 # #
-# echo "${RELEASE}" >/opt/"${APPLICATION_NAME}"_version.txt
-# msg_ok "Setup ${APPLICATION_NAME}"
+# echo "${RELEASE}" >/opt/"${application_name}"_version.txt
+# msg_ok "Setup ${application_name}"
 
 # # Creating Service (if needed)
 # msg_info "Creating Service"
-# cat <<EOF >/etc/systemd/system/"${APPLICATION_NAME}".service
+# cat <<EOF >/etc/systemd/system/"${application_name}".service
 # [Unit]
-# Description=${APPLICATION_NAME} Service
+# Description=${application_name} Service
 # After=network.target
 
 # [Service]
 # Type=simple
 # User=root
-# WorkingDirectory=/opt/${APPLICATION_NAME}
-# ExecStart=/opt/${APPLICATION_NAME}/venv/bin/python /opt/${APPLICATION_NAME}/main.py ${COMFYUI_PYTHON_ARGS} --listen
+# WorkingDirectory=/opt/${application_name}
+# ExecStart=/opt/${application_name}/venv/bin/python /opt/${application_name}/main.py ${comfyui_python_args} --listen
 # Restart=on-failure
 
 # [Install]
 # WantedBy=multi-user.target
 # EOF
-# systemctl enable -q --now "${APPLICATION_NAME}"
+# systemctl enable -q --now "${application_name}"
 # msg_ok "Created Service"
 
 # motd_ssh
@@ -212,7 +214,7 @@ done
 
 # Cleanup
 msg_info "Cleaning up"
-rm -f "${APPLICATION_NAME}".zip
+rm -f "${application_name}".zip
 $STD apt-get -y autoremove
 $STD apt-get -y autoclean
 msg_ok "Cleaned"
