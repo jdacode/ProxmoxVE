@@ -18,7 +18,6 @@ GPU_TYPE=""
 GPU_TYPE="None\nNVIDIA\nAMD\nIntel"
 
 msg_info "GPU: ${GPU_TYPE}"
-exit_script
 
 if [[ -z "$GPU_TYPE" ]]; then
   GPU="None"
