@@ -78,17 +78,18 @@ msg_info "Starting ${application_name} installation"
 # done
 ##########################################
 
+echo
 echo "=============================================================="
 echo
 echo
 echo "${TAB3}Default configuration summary:"
 echo "${TAB3}-------------------------------"
-echo "${TAB3}ComfyUI version     : ${comfyui_version}"
-echo "${TAB3}GPU                 : ${gpu_type}"
-echo "${TAB3}Python version (uv) : ${python_version_uv}"
-echo "${TAB3}Application name    : ${application_name}"
-echo "${TAB3}Port                : ${PORT}"
-echo "${TAB3}ComfyUI arguments   : ${comfyui_python_args}"
+echo "${TAB3}${TAB3}ComfyUI version     : ${comfyui_version}"
+echo "${TAB3}${TAB3}GPU                 : ${gpu_type}"
+echo "${TAB3}${TAB3}Python version (uv) : ${python_version_uv}"
+echo "${TAB3}${TAB3}Application name    : ${application_name}"
+echo "${TAB3}${TAB3}Port                : ${port_arg}"
+echo "${TAB3}${TAB3}ComfyUI arguments   : ${comfyui_python_args}"
 echo
 
 while true; do
@@ -114,14 +115,15 @@ done
 
 
 while true; do
+  echo
   echo "=============================================================="
   echo
   echo
   echo "${TAB3}Choose the GPU type for ComfyUI:"
-  echo "${TAB3}  1) None   (recommended, default)"
-  echo "${TAB3}  2) NVIDIA"
-  echo "${TAB3}  3) AMD"
-  echo "${TAB3}  4) Intel"
+  echo "${TAB3}${TAB3}  1) None   (recommended, default)"
+  echo "${TAB3}${TAB3}  2) NVIDIA"
+  echo "${TAB3}${TAB3}  3) AMD"
+  echo "${TAB3}${TAB3}  4) Intel"
   echo
 
   echo
