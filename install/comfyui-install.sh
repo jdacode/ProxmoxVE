@@ -24,54 +24,130 @@ APPLICATION_NAME="${APPLICATION}"
 PORT="8080"
 COMFYUI_PYTHON_ARGS="--port ${PORT}"
 
-CONFIG_SUMMARY="\
-Default configuration:
-
-  ComfyUI version     : ${COMFYUI_VERSION}
-  GPU                 : ${GPU}
-  Python version (uv) : ${PYTHON_VERSION_UV}
-  Application name    : ${APPLICATION_NAME}
-  ComfyUI arguments   : ${COMFYUI_PYTHON_ARGS}"
 
 
-whiptail --backtitle "${WHIPTAIL_BACKTITLE}" \
-         --title "${WHIPTAIL_TITLE}" \
-         --msgbox "${CONFIG_SUMMARY}" 15 60
+##########################################
+# CONFIG_SUMMARY="\
+# Default configuration:
 
-# GPU Selection
+#   ComfyUI version     : ${COMFYUI_VERSION}
+#   GPU                 : ${GPU}
+#   Python version (uv) : ${PYTHON_VERSION_UV}
+#   Application name    : ${APPLICATION_NAME}
+#   ComfyUI python args : ${COMFYUI_PYTHON_ARGS}"
+
+# whiptail --backtitle "${WHIPTAIL_BACKTITLE}" \
+#          --title "${WHIPTAIL_TITLE}" \
+#          --msgbox "${CONFIG_SUMMARY}" 15 60
+
+# # GPU Selection
+# while true; do
+#   GPU=$(whiptail --backtitle "${WHIPTAIL_BACKTITLE}" --menu \
+#     "Select GPU Type:" 15 58 4 \
+#     "none" "None (recommended, default)" \
+#     "nvidia" "NVIDIA" \
+#     "amd" "AMD" \
+#     "intel" "Intel" \
+#     --default-item "none" \
+#     --title "ComfyUI Configuration" 3>&1 1>&2 2>&3)
+#   [ $? -ne 0 ] && exit_script
+
+#   case "$GPU" in
+#   none)
+#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+#     break
+#     ;;
+#   nvidia)
+#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+#     break
+#     ;;
+#   amd)
+#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+#     break
+#     ;;
+#   intel)
+#     echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+#     break
+#     ;;
+#   *)
+#     exit_script
+#     ;;
+#   esac
+# done
+##########################################
+
+echo
+echo "${TAB3}Default configuration summary:"
+echo "${TAB3}-------------------------------"
+echo "${TAB3}ComfyUI version     : ${COMFYUI_VERSION}"
+echo "${TAB3}GPU                 : ${GPU}"
+echo "${TAB3}Python version (uv) : ${PYTHON_VERSION_UV}"
+echo "${TAB3}Application name    : ${APPLICATION_NAME}"
+echo "${TAB3}Port                : ${PORT}"
+echo "${TAB3}ComfyUI arguments   : ${COMFYUI_PYTHON_ARGS}"
+echo
+
 while true; do
-  GPU=$(whiptail --backtitle "${WHIPTAIL_BACKTITLE}" --menu \
-    "Select GPU Type:" 15 58 4 \
-    "none" "None (recommended, default)" \
-    "nvidia" "NVIDIA" \
-    "amd" "AMD" \
-    "intel" "Intel" \
-    --default-item "none" \
-    --title "ComfyUI Configuration" 3>&1 1>&2 2>&3)
-  [ $? -ne 0 ] && exit_script
+  read -rp "${TAB3}Do you want to keep this configuration? [Y/n]: " CONFIG_CONFIRM
+  CONFIG_CONFIRM=${CONFIG_CONFIRM:-Y}
 
-  case "$GPU" in
-  none)
-    echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
-    break
-    ;;
-  nvidia)
-    echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
-    break
-    ;;
-  amd)
-    echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
-    break
-    ;;
-  intel)
-    echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
-    break
-    ;;
-  *)
-    exit_script
-    ;;
+  case "$CONFIG_CONFIRM" in
+    [Yy]*)
+      echo "${TAB3}Configuration accepted."
+      break
+      ;;
+    [Nn]*)
+      echo "${TAB3}Switching to advanced configuration..."
+      break
+      ;;
+    *)
+      echo "${TAB3}Please enter Y (yes) or N (no)."
+      ;;
   esac
 done
+
+
+while true; do
+  echo
+  echo "${TAB3}Choose the GPU type for ComfyUI:"
+  echo "${TAB3}  1) None   (recommended, default)"
+  echo "${TAB3}  2) NVIDIA"
+  echo "${TAB3}  3) AMD"
+  echo "${TAB3}  4) Intel"
+  echo
+
+  read -rp "${TAB3}Enter your choice [1-4] (default: 1): " GPU_CHOICE
+  GPU_CHOICE=${GPU_CHOICE:-1}
+
+  case "$GPU_CHOICE" in
+    1)
+      GPU="none"
+      ;;
+    2)
+      GPU="nvidia"
+      ;;
+    3)
+      GPU="amd"
+      ;;
+    4)
+      GPU="intel"
+      ;;
+    *)
+      echo "${TAB3}Invalid choice. Please enter a number between 1 and 4."
+      continue
+      ;;
+  esac
+
+  echo -e "${CM}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
+  break
+done
+
+
+
+
+
+
+
 
 # # Installs uv
 # msg_info "Setup uv"
