@@ -25,11 +25,10 @@ msg_info "Setup ${APPLICATION}"
 RELEASE=$(curl -fsSL https://api.github.com/repos/comfyanonymous/ComfyUI/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3) }')
 curl -fsSL -o "${APPLICATION}.zip" "https://github.com/comfyanonymous/ComfyUI/archive/refs/tags/${RELEASE}.zip"
 unzip -q "${APPLICATION}.zip"
-TEST=$(ls -hals)
-msg_info "${TEST}"
-mv "${APPLICATION}" "/opt/"
-TEST=$(ls -hals /opt/)
-msg_info "${TEST}"
+# Remove v
+CLEAN_RELEASE="${RELEASE//v/}"
+# Move app to opt
+mv "${APPLICATION}-${CLEAN_RELEASE}/" "/opt/${APPLICATION}"
 $STD uv venv "/opt/${APPLICATION}/venv"
 $STD uv pip install -r "/opt/${APPLICATION}/requirements.txt" --python="/opt/${APPLICATION}/venv/bin/python"
 #
@@ -63,7 +62,7 @@ customize
 
 # Cleanup
 msg_info "Cleaning up"
-rm -f "${RELEASE}".zip
+rm -f "${APPLICATION}".zip
 $STD apt-get -y autoremove
 $STD apt-get -y autoclean
 msg_ok "Cleaned"
