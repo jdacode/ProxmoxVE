@@ -14,20 +14,21 @@ color
 # network_check
 # update_os
 
-GPU_TYPE=""
+GPU="None"
 GPU_TYPE="None\nNVIDIA\nAMD\nIntel"
 
+msg_info "GPU: ${GPU}"
 msg_info "GPU: ${GPU_TYPE}"
 
 if [[ -z "$GPU_TYPE" ]]; then
   GPU="None"
   echo -e "${CREATING}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
 else
-  GPU=$(whiptail --backtitle "Proxmox VE Helper Scripts" --menu "Select GPU Type:" 15 40 6 $(echo "$GPU_TYPE" | awk '{print $0}') 3>&1 1>&2 2>&3)
+  GPU=$(whiptail --backtitle "Proxmox VE Helper Scripts" --menu "Select GPU Type:" 15 40 6 $(echo "$GPU_TYPE") 3>&1 1>&2 2>&3)
   if [ -z "$GPU" ]; then
     exit_script
   else
-    echo -e "${CREATING}${BOLD}${DGN}Bridge: ${BGN}$GPU${CL}"
+    echo -e "${CREATING}${BOLD}${DGN}GPU: ${BGN}$GPU${CL}"
   fi
 fi
 
