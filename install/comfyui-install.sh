@@ -116,7 +116,7 @@ msg_ok "Installation ${application_name}"
 
 msg_info "Advanced configuration"
 CONFIG_CONFIRM=${CONFIG_CONFIRM,,}
-if [[ "$CONFIG_CONFIRM" == "y" ]]; then
+if [[ "$CONFIG_CONFIRM" == "n" ]]; then
   while true; do
     echo
     echo "${TAB3}=============================================================="
@@ -165,11 +165,6 @@ msg_ok "Advanced configuration"
 
 
 
-
-
-
-echo -e "${CM}${BOLD}${DGN}Backtitle           : ${BGN}${whiptail_backtitle}${CL}"
-echo -e "${CM}${BOLD}${DGN}Title               : ${BGN}${whiptail_title}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI version     : ${BGN}${comfyui_version}${CL}"
 echo -e "${CM}${BOLD}${DGN}GPU                 : ${BGN}${gpu_type}${CL}"
 echo -e "${CM}${BOLD}${DGN}Python version (uv) : ${BGN}${python_version_uv}${CL}"
