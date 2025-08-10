@@ -12,7 +12,7 @@ verb_ip6
 catch_errors
 setting_up_container
 network_check
-# update_os
+update_os
 
 
 
@@ -27,7 +27,7 @@ comfyui_python_args="--port ${port_arg}"
 
 
 # Default configuration variables
-default_settings_display() {
+default_settings_info() {
   echo
   echo "${TAB3}${TAB3}Default configuration summary:"
   echo "${TAB3}${TAB3}-------------------------------"
@@ -58,7 +58,7 @@ select_gpu_type() {
       2) gpu_type="nvidia"; break ;;
       3) gpu_type="amd"; break ;;
       4) gpu_type="intel"; break ;;
-      *) echo "${TAB3}${TAB3}${TAB3}Invalid choice. Please enter a number between 1 and 4." ;;
+      *) echo "${TAB3}${TAB3}${TAB3}${TAB3}Invalid choice. Please enter a number between 1 and 4." ;;
     esac
   done
 }
@@ -72,7 +72,7 @@ set_comfyui_version() {
       comfyui_version="$input_version"
       break
     else
-      echo "${TAB3}${TAB3}${TAB3}Invalid version format. Use v0.3.49 style."
+      echo "${TAB3}${TAB3}${TAB3}${TAB3}Invalid version format. Use v0.3.49 style."
     fi
   done
 }
@@ -92,7 +92,7 @@ set_port_number() {
       port_arg="$input_port"
       break
     else
-      echo "${TAB3}${TAB3}${TAB3}Invalid port. Must be a number."
+      echo "${TAB3}${TAB3}${TAB3}${TAB3}Invalid port. Must be a number."
     fi
   done
 }
@@ -108,20 +108,20 @@ confirm_configuration() {
   while true; do
     echo
     echo
-    read -rp "${TAB3}${TAB3}Do you want to keep this configuration? [Y/n]: " CONFIG_CONFIRM
+    read -rp "${TAB3}${TAB3}${TAB3}Do you want to keep this configuration? [Y/n]: " CONFIG_CONFIRM
     CONFIG_CONFIRM=${CONFIG_CONFIRM:-y}
 
     case "$CONFIG_CONFIRM" in
       [Yy])
-        echo "${TAB3}${TAB3}${TAB3}Configuration accepted."
+        echo "${TAB3}${TAB3}${TAB3}${TAB3}Configuration accepted."
         break
         ;;
       [Nn])
-        echo "${TAB3}${TAB3}${TAB3}Switching to advanced configuration..."
+        echo "${TAB3}${TAB3}${TAB3}${TAB3}Switching to advanced configuration..."
         break
         ;;
       *)
-        echo "${TAB3}${TAB3}${TAB3}Please enter Y (yes) or N (no)."
+        echo "${TAB3}${TAB3}${TAB3}${TAB3}Please enter Y (yes) or N (no)."
         ;;
     esac
   done
@@ -139,23 +139,29 @@ division_line() {
 advanced_config() {
   division_line
   select_gpu_type
+  division_line
   set_comfyui_version
+  division_line
   set_python_version
+  division_line
   set_port_number
+  division_line
   set_comfyui_args
 }
 
 # Basic config
+msg_info "Comfyui configuration"
 division_line
 select_gpu_type
-default_settings_display
+division_line
+default_settings_info
 confirm_configuration
 # Trigger advanced config
-CONFIG_CONFIRM=${CONFIG_CONFIRM,,}
-if [[ "$CONFIG_CONFIRM" == "n" ]]; then
+config_confirm_clean=${CONFIG_CONFIRM,,}
+if [[ "$config_confirm_clean" == "n" ]]; then
   advanced_config
 fi
-
+msg_ok "Comfyui configuration"
 
 
 # Default configuration variables
@@ -196,7 +202,7 @@ CLEAN_RELEASE="${RELEASE//v/}"
 # Move app to opt
 mv "${application_name}-${CLEAN_RELEASE}/" "/opt/${application_name}"
 echo "${RELEASE}" >/opt/"${application_name}"_version.txt
-msg_ok "Installed ComfyUI version ${comfyui_version}"
+msg_ok "Installed ComfyUI version: ${RELEASE}"
 
 
 
