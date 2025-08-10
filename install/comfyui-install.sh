@@ -16,6 +16,14 @@ update_os
 
 
 
+# Installing Dependencies
+msg_info "Installing Dependencies"
+$STD apt-get install -y \
+  git
+msg_ok "Installed Dependencies"
+
+
+
 # Default configuration variables
 comfyui_version="latest"
 gpu_type="None"
@@ -48,7 +56,7 @@ select_gpu_type() {
     echo
     echo "${TAB3}${TAB3}Choose the GPU type for ComfyUI:"
     echo "${TAB3}${TAB3}-------------------------------"
-    echo "${TAB3}${TAB3}${TAB3}  1) None   (default)"
+    echo "${TAB3}${TAB3}${TAB3}  1) None"
     echo "${TAB3}${TAB3}${TAB3}  2) NVIDIA"
     echo "${TAB3}${TAB3}${TAB3}  3) AMD"
     echo "${TAB3}${TAB3}${TAB3}  4) Intel"
