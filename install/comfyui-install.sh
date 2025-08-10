@@ -130,7 +130,7 @@ set_comfyui_manager() {
 # ComfyUI Manager
 install_comfyui_manager() {
   # Define the target directory
-  local custom_nodes_dir="/opt/${application_name}/ComfyUI/custom_nodes"
+  local custom_nodes_dir="/opt/${application_name}/custom_nodes"
 
   # Check if the directory exists
   if [[ ! -d "$custom_nodes_dir" ]]; then
@@ -204,7 +204,7 @@ advanced_config() {
 }
 
 # Basic config
-msg_info "Comfyui configuration"
+msg_info "${application_name} configuration"
 division_line
 select_gpu_type
 division_line
@@ -216,7 +216,8 @@ config_confirm_clean=${CONFIG_CONFIRM,,}
 if [[ "$config_confirm_clean" == "n" ]]; then
   advanced_config
 fi
-msg_ok "Comfyui configuration"
+msg_ok "${application_name} configuration"
+
 
 
 # Default configuration variables
@@ -226,6 +227,7 @@ echo -e "${CM}${BOLD}${DGN}Python version (uv) : ${BGN}${python_version_uv}${CL}
 echo -e "${CM}${BOLD}${DGN}Application name    : ${BGN}${application_name}${CL}"
 echo -e "${CM}${BOLD}${DGN}Port                : ${BGN}${port_arg}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI python args : ${BGN}${comfyui_python_args}${CL}"
+echo -e "${CM}${BOLD}${DGN}ComfyUI Manager     : ${BGN}${comfyui_manager_enabled}${CL}"
 
 
 
@@ -297,11 +299,12 @@ msg_ok "Python dependencies"
 
 
 # Comfyui manager installation
-msg_info "Install Comfyui Manager"
-if [[ "$comfyui_manager_enabled" == "yes" ]]; then
+msg_info "Install ${application_name} Manager"
+if [[ "${comfyui_manager_enabled}" == "yes" ]]; then
   install_comfyui_manager
 fi
-msg_ok "Install Comfyui Manager"
+msg_ok "Install ${application_name} Manager"
+
 
 
 # Creating Service
