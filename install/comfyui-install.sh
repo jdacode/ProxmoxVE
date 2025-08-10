@@ -23,6 +23,7 @@ python_version_uv="3.12"
 application_name="${APPLICATION}"
 port_arg="8080"
 comfyui_python_args="--port ${port_arg}"
+comfyui_manager_enabled="yes"
 
 
 
@@ -37,6 +38,7 @@ default_settings_info() {
   echo "${TAB3}${TAB3}${TAB3}Application name    : ${application_name}"
   echo "${TAB3}${TAB3}${TAB3}Port                : ${port_arg}"
   echo "${TAB3}${TAB3}${TAB3}ComfyUI arguments   : ${comfyui_python_args}"
+  echo "${TAB3}${TAB3}${TAB3}ComfyUI Manager     : ${comfyui_manager_enabled}"
   echo
 }
 
@@ -99,8 +101,59 @@ set_port_number() {
 
 # ComfyUI arguments
 set_comfyui_args() {
-  read -rp "${TAB3}${TAB3}Enter ComfyUI arguments [default: ${comfyui_python_args}]: " input_args
+  read -rp "${TAB3}${TAB3}Enter ComfyUI python args [default: ${comfyui_python_args}]: " input_args
   comfyui_python_args=${input_args:-$comfyui_python_args}
+}
+
+# Set ComfyUI manager
+set_comfyui_manager() {
+  while true; do
+    read -rp "${TAB3}${TAB3}Enable ComfyUI-Manager? [Y/n] (default: ${comfyui_manager_enabled}): " input_manager
+    input_manager=${input_manager:-$comfyui_manager_enabled}
+    case "${input_manager,,}" in
+      [Yy])
+        comfyui_manager_enabled="yes"
+        break
+        ;;
+      [Nn])
+        comfyui_manager_enabled="no"
+        break
+        ;;
+      *)
+        echo "${TAB3}${TAB3}${TAB3}Please enter Y (yes) or N (no)."
+        ;;
+    esac
+  done
+}
+
+
+# ComfyUI Manager
+install_comfyui_manager() {
+  # Define the target directory
+  local custom_nodes_dir="/opt/${application_name}/ComfyUI/custom_nodes"
+
+  # Check if the directory exists
+  if [[ ! -d "$custom_nodes_dir" ]]; then
+    echo "${TAB3}${TAB3}${TAB3}Error: Directory not found: $custom_nodes_dir"
+    return 1
+  fi
+
+  # Navigate to the directory
+  cd "$custom_nodes_dir" || {
+    echo "${TAB3}${TAB3}${TAB3}Failed to enter directory: $custom_nodes_dir"
+    return 1
+  }
+
+  # Clone the manager
+  if [[ -d "comfyui-manager" ]]; then
+    echo "${TAB3}${TAB3}${TAB3}ComfyUI-Manager already exists. Skipping clone."
+  else
+    git clone https://github.com/ltdrdata/ComfyUI-Manager comfyui-manager
+  fi
+
+  echo
+  echo "${TAB3}${TAB3}${TAB3}Please restart ComfyUI to activate the manager."
+  echo
 }
 
 # Confirm configuration
@@ -127,9 +180,9 @@ confirm_configuration() {
   done
 }
 
-
 # Division line
 division_line() {
+  echo
   echo
   echo "${TAB3}=============================================================="
   echo
@@ -137,7 +190,6 @@ division_line() {
 
 # Advanced configuration wrapper
 advanced_config() {
-  division_line
   select_gpu_type
   division_line
   set_comfyui_version
@@ -147,6 +199,8 @@ advanced_config() {
   set_port_number
   division_line
   set_comfyui_args
+  division_line
+  set_comfyui_manager
 }
 
 # Basic config
@@ -156,6 +210,7 @@ select_gpu_type
 division_line
 default_settings_info
 confirm_configuration
+division_line
 # Trigger advanced config
 config_confirm_clean=${CONFIG_CONFIRM,,}
 if [[ "$config_confirm_clean" == "n" ]]; then
@@ -170,7 +225,7 @@ echo -e "${CM}${BOLD}${DGN}GPU                 : ${BGN}${gpu_type}${CL}"
 echo -e "${CM}${BOLD}${DGN}Python version (uv) : ${BGN}${python_version_uv}${CL}"
 echo -e "${CM}${BOLD}${DGN}Application name    : ${BGN}${application_name}${CL}"
 echo -e "${CM}${BOLD}${DGN}Port                : ${BGN}${port_arg}${CL}"
-echo -e "${CM}${BOLD}${DGN}ComfyUI arguments   : ${BGN}${comfyui_python_args}${CL}"
+echo -e "${CM}${BOLD}${DGN}ComfyUI python args : ${BGN}${comfyui_python_args}${CL}"
 
 
 
@@ -240,7 +295,16 @@ $STD uv pip install -r "/opt/${application_name}/requirements.txt" --python="/op
 msg_ok "Python dependencies"
 
 
-# Creating Service (if needed)
+
+# Comfyui manager installation
+msg_info "Install Comfyui Manager"
+if [[ "$comfyui_manager_enabled" == "yes" ]]; then
+  install_comfyui_manager
+fi
+msg_ok "Install Comfyui Manager"
+
+
+# Creating Service
 msg_info "Creating Service"
 cat <<EOF >/etc/systemd/system/"${application_name}".service
 [Unit]
