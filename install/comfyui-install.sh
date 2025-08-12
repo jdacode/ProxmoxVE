@@ -34,6 +34,8 @@ port_arg="8080"
 comfyui_python_port_args="--port ${port_arg}"
 comfyui_python_args="--cpu"
 comfyui_manager_enabled="Y"
+app_path="/opt/${application_name}"
+python_path="${app_path}/venv/bin/python"
 
 
 
@@ -138,10 +140,10 @@ set_comfyui_manager() {
 }
 
 
-# ComfyUI Manager
+# Installation ComfyUI Manager 
 install_comfyui_manager() {
   # Define the target directory
-  local custom_nodes_dir="/opt/${application_name}/custom_nodes"
+  local custom_nodes_dir="${app_path}/custom_nodes"
 
   # Check if the directory exists
   if [[ ! -d "${custom_nodes_dir}" ]]; then
@@ -155,7 +157,7 @@ install_comfyui_manager() {
   else
     git clone https://github.com/ltdrdata/ComfyUI-Manager "${custom_nodes_dir}/comfyui-manager"
     # Install Manager dependencies with uv
-    $STD uv pip install -r "/opt/${application_name}/comfyui-manager/requirements.txt" --python="/opt/${application_name}/venv/bin/python"
+    $STD uv pip install -r "${custom_nodes_dir}/comfyui-manager/requirements.txt" --python="${python_path}"
   fi
 
   echo
@@ -269,7 +271,7 @@ unzip -q "${application_name}.zip"
 # Remove v
 CLEAN_RELEASE="${RELEASE//v/}"
 # Move app to opt
-mv "${application_name}-${CLEAN_RELEASE}/" "/opt/${application_name}"
+mv "${application_name}-${CLEAN_RELEASE}/" "${app_path}"
 echo "${RELEASE}" >/opt/"${application_name}"_version.txt
 msg_ok "Installed ComfyUI version: ${RELEASE}"
 
@@ -277,7 +279,7 @@ msg_ok "Installed ComfyUI version: ${RELEASE}"
 
 # Dependencies
 msg_info "Python dependencies"
-$STD uv venv "/opt/${application_name}/venv"
+$STD uv venv "${app_path}/venv"
 if [[ "$gpu_type" == "NVIDIA" ]]; then
   echo "NVIDIA selected"
   $STD uv pip install \
@@ -285,7 +287,7 @@ if [[ "$gpu_type" == "NVIDIA" ]]; then
       torchvision \
       torchaudio \
       --extra-index-url https://download.pytorch.org/whl/cu128 \
-      --python="/opt/${application_name}/venv/bin/python"
+      --python="${python_path}"
 elif [[ "$gpu_type" == "AMD" ]]; then
   echo "AMD selected"
   $STD uv pip install \
@@ -293,7 +295,7 @@ elif [[ "$gpu_type" == "AMD" ]]; then
       torchvision \
       torchaudio \
       --index-url https://download.pytorch.org/whl/rocm6.3 \
-      --python="/opt/${application_name}/venv/bin/python"
+      --python="${python_path}"
 elif [[ "$gpu_type" == "Intel" ]]; then
   echo "Intel selected"
   $STD uv pip install \
@@ -301,11 +303,11 @@ elif [[ "$gpu_type" == "Intel" ]]; then
       torchvision \
       torchaudio \
       --index-url https://download.pytorch.org/whl/xpu \
-      --python="/opt/${application_name}/venv/bin/python"
+      --python="${python_path}"
 else
   echo "No GPU selected"
 fi
-$STD uv pip install -r "/opt/${application_name}/requirements.txt" --python="/opt/${application_name}/venv/bin/python"
+$STD uv pip install -r "${app_path}/requirements.txt" --python="${python_path}"
 msg_ok "Python dependencies"
 
 
@@ -332,8 +334,8 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/opt/${application_name}
-ExecStart=/opt/${application_name}/venv/bin/python /opt/${application_name}/main.py --listen ${comfyui_python_port_args} ${comfyui_python_args}
+WorkingDirectory=${app_path}
+ExecStart=${python_path} ${app_path}/main.py --listen ${comfyui_python_port_args} ${comfyui_python_args}
 Restart=on-failure
 
 [Install]
