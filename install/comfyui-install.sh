@@ -32,8 +32,8 @@ python_version_uv="3.12"
 application_name="${APPLICATION}"
 port_arg="8080"
 comfyui_python_port_args="--port ${port_arg}"
-comfyui_python_args=""
-comfyui_manager_enabled="y"
+comfyui_python_args="--cpu"
+comfyui_manager_enabled="Y"
 
 
 
@@ -123,11 +123,11 @@ set_comfyui_manager() {
     input_manager=${input_manager:-$comfyui_manager_enabled}
     case "${input_manager,,}" in
       [Yy])
-        comfyui_manager_enabled="y"
+        comfyui_manager_enabled="Y"
         break
         ;;
       [Nn])
-        comfyui_manager_enabled="n"
+        comfyui_manager_enabled="N"
         break
         ;;
       *)
@@ -311,7 +311,7 @@ msg_ok "Python dependencies"
 
 
 # Comfyui manager installation
-if [[ "${comfyui_manager_enabled}" == "y" ]]; then
+if [[ "${comfyui_manager_enabled}" == "Y" ]]; then
   msg_info "Install ${application_name} Manager"
   install_comfyui_manager
   msg_ok "Installed ${application_name} Manager"
