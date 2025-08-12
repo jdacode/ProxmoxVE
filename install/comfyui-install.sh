@@ -19,7 +19,7 @@ update_os
 # Installing Dependencies
 msg_info "Installing Dependencies"
 $STD apt-get install -y \
-  git
+  git \
   nvtop
 msg_ok "Installed Dependencies"
 
