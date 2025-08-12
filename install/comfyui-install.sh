@@ -42,12 +42,13 @@ current_settings_info() {
   echo
   echo "${TAB3}${TAB3}Current configuration summary:"
   echo "${TAB3}${TAB3}-------------------------------"
-  echo "${TAB3}${TAB3}${TAB3}ComfyUI version     : ${comfyui_version}"
-  echo "${TAB3}${TAB3}${TAB3}GPU                 : ${gpu_type}"
-  echo "${TAB3}${TAB3}${TAB3}Python version (uv) : ${python_version_uv}"
-  echo "${TAB3}${TAB3}${TAB3}Port                : ${port_arg}"
-  echo "${TAB3}${TAB3}${TAB3}ComfyUI python args : ${comfyui_python_args}"
-  echo "${TAB3}${TAB3}${TAB3}ComfyUI Manager     : ${comfyui_manager_enabled}"
+  echo "${TAB3}${TAB3}${TAB3}ComfyUI version            : ${comfyui_version}"
+  echo "${TAB3}${TAB3}${TAB3}GPU                        : ${gpu_type}"
+  echo "${TAB3}${TAB3}${TAB3}Python version (uv)        : ${python_version_uv}"
+  echo "${TAB3}${TAB3}${TAB3}Port                       : ${port_arg}"
+  echo "${TAB3}${TAB3}${TAB3}ComfyUI python args        : ${comfyui_python_args}"
+  echo "${TAB3}${TAB3}${TAB3}ComfyUI Manager            : ${comfyui_manager_enabled}"
+  echo "${TAB3}${TAB3}${TAB3}Preview ExecStart command  : main.py --listen ${comfyui_python_port_args} ${comfyui_python_args}"
   echo
 }
 
@@ -310,11 +311,14 @@ msg_ok "Python dependencies"
 
 
 # Comfyui manager installation
-msg_info "Install ${application_name} Manager"
-if [[ "${comfyui_manager_enabled}" == "yes" ]]; then
+if [[ "${comfyui_manager_enabled}" == "y" ]]; then
+  msg_info "Install ${application_name} Manager"
   install_comfyui_manager
+  msg_ok "Installed ${application_name} Manager"
+else
+  msg_error "No installed ${application_name} Manager"
 fi
-msg_ok "Install ${application_name} Manager"
+
 
 
 
