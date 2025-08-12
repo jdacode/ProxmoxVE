@@ -33,19 +33,18 @@ application_name="${APPLICATION}"
 port_arg="8080"
 comfyui_python_port_args="--port ${port_arg}"
 comfyui_python_args=""
-comfyui_manager_enabled="yes"
+comfyui_manager_enabled="y"
 
 
 
-# Default configuration variables
-default_settings_info() {
+# Current configuration variables
+current_settings_info() {
   echo
-  echo "${TAB3}${TAB3}Default configuration summary:"
+  echo "${TAB3}${TAB3}Current configuration summary:"
   echo "${TAB3}${TAB3}-------------------------------"
   echo "${TAB3}${TAB3}${TAB3}ComfyUI version     : ${comfyui_version}"
   echo "${TAB3}${TAB3}${TAB3}GPU                 : ${gpu_type}"
   echo "${TAB3}${TAB3}${TAB3}Python version (uv) : ${python_version_uv}"
-  echo "${TAB3}${TAB3}${TAB3}Application name    : ${application_name}"
   echo "${TAB3}${TAB3}${TAB3}Port                : ${port_arg}"
   echo "${TAB3}${TAB3}${TAB3}ComfyUI python args : ${comfyui_python_args}"
   echo "${TAB3}${TAB3}${TAB3}ComfyUI Manager     : ${comfyui_manager_enabled}"
@@ -58,18 +57,18 @@ select_gpu_type() {
     echo
     echo "${TAB3}${TAB3}Choose the GPU type for ComfyUI:"
     echo "${TAB3}${TAB3}-------------------------------"
-    echo "${TAB3}${TAB3}${TAB3}  1) None"
-    echo "${TAB3}${TAB3}${TAB3}  2) NVIDIA"
-    echo "${TAB3}${TAB3}${TAB3}  3) AMD"
-    echo "${TAB3}${TAB3}${TAB3}  4) Intel"
+    echo "${TAB3}${TAB3}${TAB3}  1. None"
+    echo "${TAB3}${TAB3}${TAB3}  2. NVIDIA"
+    echo "${TAB3}${TAB3}${TAB3}  3. AMD"
+    echo "${TAB3}${TAB3}${TAB3}  4. Intel"
     echo
-    read -rp "${TAB3}${TAB3}${TAB3}Enter your choice [1-4] (default: ${gpu_type}): " GPU_CHOICE
+    read -rp "${TAB3}${TAB3}${TAB3}Enter your choice [1-4] (current: ${gpu_type}): " GPU_CHOICE
     GPU_CHOICE=${GPU_CHOICE:-1}
     case "$GPU_CHOICE" in
-      1) gpu_type="none"; break ;;
-      2) gpu_type="nvidia"; break ;;
-      3) gpu_type="amd"; break ;;
-      4) gpu_type="intel"; break ;;
+      1) gpu_type="None"; break ;;
+      2) gpu_type="NVIDIA"; break ;;
+      3) gpu_type="AMD"; break ;;
+      4) gpu_type="Intel"; break ;;
       *) echo "${TAB3}${TAB3}${TAB3}${TAB3}Invalid choice. Please enter a number between 1 and 4." ;;
     esac
   done
@@ -78,27 +77,27 @@ select_gpu_type() {
 # ComfyUI version
 set_comfyui_version() {
   while true; do
-    read -rp "${TAB3}${TAB3}Enter ComfyUI version (e.g. v0.3.49) [default: ${comfyui_version}]: " input_version
+    read -re -i "${comfyui_version}" -p  "${TAB3}${TAB3}Enter ComfyUI version (e.g. v0.3.49 or 'latest') [current: ${comfyui_version}]: " input_version
     input_version=${input_version:-$comfyui_version}
-    if [[ "$input_version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    if [[ "$input_version" == "latest" || "$input_version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
       comfyui_version="$input_version"
       break
     else
-      echo "${TAB3}${TAB3}${TAB3}${TAB3}Invalid version format. Use v0.3.49 style."
+      echo "${TAB3}${TAB3}${TAB3}${TAB3}Invalid input. Use 'latest' or a version like v0.3.49."
     fi
   done
 }
 
 # Python version
 set_python_version() {
-  read -rp "${TAB3}${TAB3}Enter Python version (uv) [default: ${python_version_uv}]: " input_python
+  read -re -i "${python_version_uv}" -p "${TAB3}${TAB3}Enter Python version (uv) [current: ${python_version_uv}]: " input_python
   python_version_uv=${input_python:-$python_version_uv}
 }
 
 # Port number
 set_port_number() {
   while true; do
-    read -rp "${TAB3}${TAB3}Enter port number [default: ${port_arg}]: " input_port
+    read -re -i "${port_arg}" -p "${TAB3}${TAB3}Enter port number [current: ${port_arg}]: " input_port
     input_port=${input_port:-$port_arg}
     if [[ "$input_port" =~ ^[0-9]+$ ]]; then
       port_arg="$input_port"
@@ -112,26 +111,26 @@ set_port_number() {
 
 # ComfyUI arguments
 set_comfyui_args() {
-  read -rp "${TAB3}${TAB3}Enter ComfyUI python args. (e.g. --gpu-only) [default: ${comfyui_python_args}]: " input_args
+  read -re -i "${comfyui_python_args}" -p "${TAB3}${TAB3}Enter ComfyUI python args. (e.g. --gpu-only) [current: ${comfyui_python_args}]: " input_args
   comfyui_python_args=${input_args:-$comfyui_python_args}
 }
 
 # Set ComfyUI manager
 set_comfyui_manager() {
   while true; do
-    read -rp "${TAB3}${TAB3}Enable ComfyUI-Manager? [Y/n] (default: ${comfyui_manager_enabled}): " input_manager
+    read -re -i "${comfyui_manager_enabled}" -p "${TAB3}${TAB3}Enable ComfyUI-Manager? [Y/n] (current: ${comfyui_manager_enabled}): " input_manager
     input_manager=${input_manager:-$comfyui_manager_enabled}
     case "${input_manager,,}" in
       [Yy])
-        comfyui_manager_enabled="yes"
+        comfyui_manager_enabled="y"
         break
         ;;
       [Nn])
-        comfyui_manager_enabled="no"
+        comfyui_manager_enabled="n"
         break
         ;;
       *)
-        echo "${TAB3}${TAB3}${TAB3}Please enter Y (yes) or N (no)."
+        echo "${TAB3}${TAB3}${TAB3}Please enter Y/y or N/n."
         ;;
     esac
   done
@@ -173,7 +172,7 @@ confirm_configuration() {
 
     case "$CONFIG_CONFIRM" in
       [Yy])
-        echo "${TAB3}${TAB3}${TAB3}${TAB3}Default configuration accepted."
+        echo "${TAB3}${TAB3}${TAB3}${TAB3}Current configuration accepted."
         break
         ;;
       [Nn])
@@ -181,7 +180,7 @@ confirm_configuration() {
         break
         ;;
       *)
-        echo "${TAB3}${TAB3}${TAB3}${TAB3}Please enter Y (yes) or N (no)."
+        echo "${TAB3}${TAB3}${TAB3}${TAB3}Please enter Y/y or N/n."
         ;;
     esac
   done
@@ -214,10 +213,10 @@ advanced_config() {
 msg_info "${application_name} configuration"
 division_line
 select_gpu_type
-division_line
 # Advanced config loop until config_confirm_clean is "n"
 while true; do
-  default_settings_info
+  division_line
+  current_settings_info
   confirm_configuration
   division_line
   config_confirm_clean=${CONFIG_CONFIRM,,}
@@ -232,11 +231,11 @@ msg_ok "${application_name} configuration"
 
 
 
-# Default configuration variables
+# Current configuration variables
+echo -e "${CM}${BOLD}${DGN}Application name    : ${BGN}${application_name}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI version     : ${BGN}${comfyui_version}${CL}"
 echo -e "${CM}${BOLD}${DGN}GPU                 : ${BGN}${gpu_type}${CL}"
 echo -e "${CM}${BOLD}${DGN}Python version (uv) : ${BGN}${python_version_uv}${CL}"
-echo -e "${CM}${BOLD}${DGN}Application name    : ${BGN}${application_name}${CL}"
 echo -e "${CM}${BOLD}${DGN}Port                : ${BGN}${port_arg}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI python args : ${BGN}${comfyui_python_args}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI Manager     : ${BGN}${comfyui_manager_enabled}${CL}"
@@ -278,7 +277,7 @@ msg_ok "Installed ComfyUI version: ${RELEASE}"
 # Dependencies
 msg_info "Python dependencies"
 $STD uv venv "/opt/${application_name}/venv"
-if [[ "$gpu_type" == "nvidia" ]]; then
+if [[ "$gpu_type" == "NVIDIA" ]]; then
   echo "NVIDIA selected"
   $STD uv pip install \
       torch \
@@ -286,7 +285,7 @@ if [[ "$gpu_type" == "nvidia" ]]; then
       torchaudio \
       --extra-index-url https://download.pytorch.org/whl/cu128 \
       --python="/opt/${application_name}/venv/bin/python"
-elif [[ "$gpu_type" == "amd" ]]; then
+elif [[ "$gpu_type" == "AMD" ]]; then
   echo "AMD selected"
   $STD uv pip install \
       torch \
@@ -294,7 +293,7 @@ elif [[ "$gpu_type" == "amd" ]]; then
       torchaudio \
       --index-url https://download.pytorch.org/whl/rocm6.3 \
       --python="/opt/${application_name}/venv/bin/python"
-elif [[ "$gpu_type" == "intel" ]]; then
+elif [[ "$gpu_type" == "Intel" ]]; then
   echo "Intel selected"
   $STD uv pip install \
       torch \
