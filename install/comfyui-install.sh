@@ -112,7 +112,7 @@ set_port_number() {
 
 # ComfyUI arguments
 set_comfyui_args() {
-  read -rp "${TAB3}${TAB3}Enter ComfyUI python args [default: ${comfyui_python_args}]: " input_args
+  read -rp "${TAB3}${TAB3}Enter ComfyUI python args. (e.g. --gpu-only) [default: ${comfyui_python_args}]: " input_args
   comfyui_python_args=${input_args:-$comfyui_python_args}
 }
 
@@ -154,6 +154,8 @@ install_comfyui_manager() {
     echo "${TAB3}${TAB3}${TAB3}ComfyUI-Manager already exists. Skipping clone."
   else
     git clone https://github.com/ltdrdata/ComfyUI-Manager "${custom_nodes_dir}/comfyui-manager"
+    # Install Manager dependencies with uv
+    $STD uv pip install -r "/opt/${application_name}/comfyui-manager/requirements.txt" --python="/opt/${application_name}/venv/bin/python"
   fi
 
   echo
