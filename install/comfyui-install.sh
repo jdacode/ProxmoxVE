@@ -20,6 +20,7 @@ update_os
 msg_info "Installing Dependencies"
 $STD apt-get install -y \
   git
+  nvtop
 msg_ok "Installed Dependencies"
 
 
@@ -30,7 +31,8 @@ gpu_type="None"
 python_version_uv="3.12"
 application_name="${APPLICATION}"
 port_arg="8080"
-comfyui_python_args="--port ${port_arg}"
+comfyui_python_port_args="--port ${port_arg}"
+comfyui_python_args=""
 comfyui_manager_enabled="yes"
 
 
@@ -45,7 +47,7 @@ default_settings_info() {
   echo "${TAB3}${TAB3}${TAB3}Python version (uv) : ${python_version_uv}"
   echo "${TAB3}${TAB3}${TAB3}Application name    : ${application_name}"
   echo "${TAB3}${TAB3}${TAB3}Port                : ${port_arg}"
-  echo "${TAB3}${TAB3}${TAB3}ComfyUI arguments   : ${comfyui_python_args}"
+  echo "${TAB3}${TAB3}${TAB3}ComfyUI python args : ${comfyui_python_args}"
   echo "${TAB3}${TAB3}${TAB3}ComfyUI Manager     : ${comfyui_manager_enabled}"
   echo
 }
@@ -61,7 +63,7 @@ select_gpu_type() {
     echo "${TAB3}${TAB3}${TAB3}  3) AMD"
     echo "${TAB3}${TAB3}${TAB3}  4) Intel"
     echo
-    read -rp "${TAB3}${TAB3}${TAB3}Enter your choice [1-4] (default: 1): " GPU_CHOICE
+    read -rp "${TAB3}${TAB3}${TAB3}Enter your choice [1-4] (default: ${gpu_type}): " GPU_CHOICE
     GPU_CHOICE=${GPU_CHOICE:-1}
     case "$GPU_CHOICE" in
       1) gpu_type="none"; break ;;
@@ -100,6 +102,7 @@ set_port_number() {
     input_port=${input_port:-$port_arg}
     if [[ "$input_port" =~ ^[0-9]+$ ]]; then
       port_arg="$input_port"
+      comfyui_python_port_args="--port ${port_arg}"
       break
     else
       echo "${TAB3}${TAB3}${TAB3}${TAB3}Invalid port. Must be a number."
@@ -141,22 +144,16 @@ install_comfyui_manager() {
   local custom_nodes_dir="/opt/${application_name}/custom_nodes"
 
   # Check if the directory exists
-  if [[ ! -d "$custom_nodes_dir" ]]; then
-    echo "${TAB3}${TAB3}${TAB3}Error: Directory not found: $custom_nodes_dir"
+  if [[ ! -d "${custom_nodes_dir}" ]]; then
+    echo "${TAB3}${TAB3}${TAB3}Error: Directory not found: ${custom_nodes_dir}"
     return 1
   fi
 
-  # Navigate to the directory
-  cd "$custom_nodes_dir" || {
-    echo "${TAB3}${TAB3}${TAB3}Failed to enter directory: $custom_nodes_dir"
-    return 1
-  }
-
   # Clone the manager
-  if [[ -d "comfyui-manager" ]]; then
+  if [[ -d "${custom_nodes_dir}/comfyui-manager" ]]; then
     echo "${TAB3}${TAB3}${TAB3}ComfyUI-Manager already exists. Skipping clone."
   else
-    git clone https://github.com/ltdrdata/ComfyUI-Manager comfyui-manager
+    git clone https://github.com/ltdrdata/ComfyUI-Manager "${custom_nodes_dir}/comfyui-manager"
   fi
 
   echo
@@ -174,7 +171,7 @@ confirm_configuration() {
 
     case "$CONFIG_CONFIRM" in
       [Yy])
-        echo "${TAB3}${TAB3}${TAB3}${TAB3}Configuration accepted."
+        echo "${TAB3}${TAB3}${TAB3}${TAB3}Default configuration accepted."
         break
         ;;
       [Nn])
@@ -216,14 +213,19 @@ msg_info "${application_name} configuration"
 division_line
 select_gpu_type
 division_line
-default_settings_info
-confirm_configuration
-division_line
-# Trigger advanced config
-config_confirm_clean=${CONFIG_CONFIRM,,}
-if [[ "$config_confirm_clean" == "n" ]]; then
-  advanced_config
-fi
+# Advanced config loop until config_confirm_clean is "n"
+while true; do
+  default_settings_info
+  confirm_configuration
+  division_line
+  config_confirm_clean=${CONFIG_CONFIRM,,}
+
+  if [[ "$config_confirm_clean" == "n" ]]; then
+    advanced_config
+  else
+    break
+  fi
+done
 msg_ok "${application_name} configuration"
 
 
@@ -326,7 +328,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/opt/${application_name}
-ExecStart=/opt/${application_name}/venv/bin/python /opt/${application_name}/main.py ${comfyui_python_args} --listen
+ExecStart=/opt/${application_name}/venv/bin/python /opt/${application_name}/main.py --listen ${comfyui_python_port_args} ${comfyui_python_args}
 Restart=on-failure
 
 [Install]
