@@ -62,7 +62,7 @@ select_gpu_type() {
     echo "${TAB3}${TAB3}${TAB3}  3. AMD"
     echo "${TAB3}${TAB3}${TAB3}  4. Intel"
     echo
-    read -rp "${TAB3}${TAB3}${TAB3}Enter your choice [1-4] (current: ${gpu_type}): " GPU_CHOICE
+    read -rp "${TAB3}${TAB3}${TAB3}Enter your choice [1-4] (Current: ${gpu_type}): " GPU_CHOICE
     GPU_CHOICE=${GPU_CHOICE:-1}
     case "$GPU_CHOICE" in
       1) gpu_type="None"; break ;;
@@ -77,7 +77,7 @@ select_gpu_type() {
 # ComfyUI version
 set_comfyui_version() {
   while true; do
-    read -re -i "${comfyui_version}" -p  "${TAB3}${TAB3}Enter ComfyUI version (e.g. v0.3.49 or 'latest') [current: ${comfyui_version}]: " input_version
+    read -re -i "${comfyui_version}" -p  "${TAB3}${TAB3}Enter ComfyUI version (e.g. v0.3.49 or 'latest') [Current: ${comfyui_version}]: " input_version
     input_version=${input_version:-$comfyui_version}
     if [[ "$input_version" == "latest" || "$input_version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
       comfyui_version="$input_version"
@@ -90,14 +90,14 @@ set_comfyui_version() {
 
 # Python version
 set_python_version() {
-  read -re -i "${python_version_uv}" -p "${TAB3}${TAB3}Enter Python version (uv) [current: ${python_version_uv}]: " input_python
+  read -re -i "${python_version_uv}" -p "${TAB3}${TAB3}Enter Python version (uv) [Current: ${python_version_uv}]: " input_python
   python_version_uv=${input_python:-$python_version_uv}
 }
 
 # Port number
 set_port_number() {
   while true; do
-    read -re -i "${port_arg}" -p "${TAB3}${TAB3}Enter port number [current: ${port_arg}]: " input_port
+    read -re -i "${port_arg}" -p "${TAB3}${TAB3}Enter port number [Current: ${port_arg}]: " input_port
     input_port=${input_port:-$port_arg}
     if [[ "$input_port" =~ ^[0-9]+$ ]]; then
       port_arg="$input_port"
@@ -111,14 +111,14 @@ set_port_number() {
 
 # ComfyUI arguments
 set_comfyui_args() {
-  read -re -i "${comfyui_python_args}" -p "${TAB3}${TAB3}Enter ComfyUI python args. (e.g. --gpu-only) [current: ${comfyui_python_args}]: " input_args
+  read -re -i "${comfyui_python_args}" -p "${TAB3}${TAB3}Enter ComfyUI python args. (e.g. --gpu-only) [Current: ${comfyui_python_args}]: " input_args
   comfyui_python_args=${input_args:-$comfyui_python_args}
 }
 
 # Set ComfyUI manager
 set_comfyui_manager() {
   while true; do
-    read -re -i "${comfyui_manager_enabled}" -p "${TAB3}${TAB3}Enable ComfyUI-Manager? [Y/n] (current: ${comfyui_manager_enabled}): " input_manager
+    read -re -i "${comfyui_manager_enabled}" -p "${TAB3}${TAB3}Enable ComfyUI-Manager? [Y/n] (Current: ${comfyui_manager_enabled}): " input_manager
     input_manager=${input_manager:-$comfyui_manager_enabled}
     case "${input_manager,,}" in
       [Yy])
