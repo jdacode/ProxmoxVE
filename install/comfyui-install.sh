@@ -34,8 +34,13 @@ port_arg="8080"
 comfyui_python_port_args="--port ${port_arg}"
 comfyui_python_args="--cpu"
 comfyui_manager_enabled="Y"
+comfyui_manager_version="latest"
 app_path="/opt/${application_name}"
 python_path="${app_path}/venv/bin/python"
+comfyui_python_index_url_nvidia="https://download.pytorch.org/whl/cu128"
+comfyui_python_index_url_amd="https://download.pytorch.org/whl/rocm6.3"
+comfyui_python_index_url_intel="https://download.pytorch.org/whl/xpu"
+skip_user_config="${skip_user_config:-N}"
 
 
 
@@ -50,9 +55,12 @@ current_settings_info() {
   echo "${TAB3}${TAB3}${TAB3}Port                       : ${port_arg}"
   echo "${TAB3}${TAB3}${TAB3}ComfyUI python args        : ${comfyui_python_args}"
   echo "${TAB3}${TAB3}${TAB3}ComfyUI Manager            : ${comfyui_manager_enabled}"
+  echo "${TAB3}${TAB3}${TAB3}ComfyUI Manager Version    : ${comfyui_manager_version}"
   echo "${TAB3}${TAB3}${TAB3}Preview ExecStart command  : main.py --listen ${comfyui_python_port_args} ${comfyui_python_args}"
   echo
 }
+
+
 
 # GPU selection
 select_gpu_type() {
@@ -77,6 +85,8 @@ select_gpu_type() {
   done
 }
 
+
+
 # ComfyUI version
 set_comfyui_version() {
   while true; do
@@ -91,11 +101,15 @@ set_comfyui_version() {
   done
 }
 
+
+
 # Python version
 set_python_version() {
   read -re -i "${python_version_uv}" -p "${TAB3}${TAB3}Enter Python version (uv) [Current: ${python_version_uv}]: " input_python
   python_version_uv=${input_python:-$python_version_uv}
 }
+
+
 
 # Port number
 set_port_number() {
@@ -112,11 +126,15 @@ set_port_number() {
   done
 }
 
+
+
 # ComfyUI arguments
 set_comfyui_args() {
   read -re -i "${comfyui_python_args}" -p "${TAB3}${TAB3}Enter ComfyUI python args. (e.g. --gpu-only) [Current: ${comfyui_python_args}]: " input_args
   comfyui_python_args=${input_args:-$comfyui_python_args}
 }
+
+
 
 # Set ComfyUI manager
 set_comfyui_manager() {
@@ -140,30 +158,59 @@ set_comfyui_manager() {
 }
 
 
+
+# ComfyUI Manager version
+set_comfyui_manager_version() {
+  if [[ "${comfyui_manager_enabled}" == "Y" ]]; then
+    while true; do
+      read -re -i "${comfyui_manager_version}" -p  "${TAB3}${TAB3}Enter ComfyUI Manager version (e.g. 3.35 or 'latest' <Note:latest='git clone repo'>) [Current: ${comfyui_manager_version}]: " input_version
+      input_version=${input_version:-$comfyui_manager_version}
+      if [[ "$input_version" == "latest" || "$input_version" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+        comfyui_manager_version="$input_version"
+        break
+      else
+        echo "${TAB3}${TAB3}${TAB3}${TAB3}Invalid input. Use 'latest' or a version like 3.35."
+      fi
+    done
+  fi
+}
+
+
+
 # Installation ComfyUI Manager 
 install_comfyui_manager() {
   # Define the target directory
   local custom_nodes_dir="${app_path}/custom_nodes"
+  local comfyui_manager_dir="${custom_nodes_dir}/comfyui-manager"
 
   # Check if the directory exists
   if [[ ! -d "${custom_nodes_dir}" ]]; then
     echo "${TAB3}${TAB3}${TAB3}Error: Directory not found: ${custom_nodes_dir}"
     return 1
   fi
-
-  # Clone the manager
-  if [[ -d "${custom_nodes_dir}/comfyui-manager" ]]; then
-    echo "${TAB3}${TAB3}${TAB3}ComfyUI-Manager already exists. Skipping clone."
+  
+  if [[ -d "${comfyui_manager_dir}" ]]; then
+    echo "${TAB3}${TAB3}${TAB3}ComfyUI-Manager already exists. Skipping installation."
   else
-    git clone https://github.com/ltdrdata/ComfyUI-Manager "${custom_nodes_dir}/comfyui-manager"
+    if [[ "${comfyui_manager_version}" == "latest" ]]; then
+      # Clone the manager
+      git clone https://github.com/ltdrdata/ComfyUI-Manager "${comfyui_manager_dir}"
+    else
+      # Download Release
+      curl -fsSL -o "${comfyui_manager_version}.zip" "https://github.com/Comfy-Org/ComfyUI-Manager/archive/refs/tags/${comfyui_manager_version}.zip"
+      # Unzip Release
+      unzip -q "${comfyui_manager_version}.zip"
+      # Move and rename
+      mv "ComfyUI-Manager-${comfyui_manager_version}" "${comfyui_manager_dir}"
+      # Clean up the zip file
+      rm -f "${comfyui_manager_version}.zip"
+    fi
     # Install Manager dependencies with uv
-    $STD uv pip install -r "${custom_nodes_dir}/comfyui-manager/requirements.txt" --python="${python_path}"
+    $STD uv pip install -r "${comfyui_manager_dir}/requirements.txt" --python="${python_path}"
   fi
-
-  echo
-  echo "${TAB3}${TAB3}${TAB3}Please restart ComfyUI to activate the manager."
-  echo
 }
+
+
 
 # Confirm configuration
 confirm_configuration() {
@@ -189,6 +236,8 @@ confirm_configuration() {
   done
 }
 
+
+
 # Division line
 division_line() {
   echo
@@ -196,6 +245,8 @@ division_line() {
   echo "${TAB3}=============================================================="
   echo
 }
+
+
 
 # Advanced configuration wrapper
 advanced_config() {
@@ -210,41 +261,52 @@ advanced_config() {
   set_comfyui_args
   division_line
   set_comfyui_manager
+  division_line
+  set_comfyui_manager_version
 }
 
-# Basic config
-msg_info "${application_name} configuration"
-division_line
-select_gpu_type
-# Advanced config loop until config_confirm_clean is "n"
-while true; do
-  division_line
-  current_settings_info
-  confirm_configuration
-  division_line
-  config_confirm_clean=${CONFIG_CONFIRM,,}
 
-  if [[ "$config_confirm_clean" == "n" ]]; then
-    advanced_config
+
+# User configuration menu
+if ! [[ "$skip_user_config" =~ ^[Yy]$ ]]; then
+  # Basic config
+  msg_info "${application_name} configuration"
+  division_line
+  select_gpu_type
+  # Advanced config loop until config_confirm_clean is "n"
+  while true; do
+    division_line
+    current_settings_info
+    confirm_configuration
+    division_line
+    config_confirm_clean=${CONFIG_CONFIRM,,}
+    if [[ "$config_confirm_clean" == "n" ]]; then
+      # Advanced config
+      advanced_config
+    else
+      break
+    fi
+  done
+  msg_ok "${application_name} configuration"
   else
-    break
-  fi
-done
-msg_ok "${application_name} configuration"
+    echo "Skipping user config"
+fi
 
 
 
-# Current configuration variables
-echo -e "${CM}${BOLD}${DGN}Application name    : ${BGN}${application_name}${CL}"
-echo -e "${CM}${BOLD}${DGN}ComfyUI version     : ${BGN}${comfyui_version}${CL}"
-echo -e "${CM}${BOLD}${DGN}GPU                 : ${BGN}${gpu_type}${CL}"
-echo -e "${CM}${BOLD}${DGN}Python version (uv) : ${BGN}${python_version_uv}${CL}"
-echo -e "${CM}${BOLD}${DGN}Port                : ${BGN}${port_arg}${CL}"
-echo -e "${CM}${BOLD}${DGN}ComfyUI python args : ${BGN}${comfyui_python_args}${CL}"
-echo -e "${CM}${BOLD}${DGN}ComfyUI Manager     : ${BGN}${comfyui_manager_enabled}${CL}"
+# Display current configuration variables
+echo -e "${CM}${BOLD}${DGN}Application name           : ${BGN}${application_name}${CL}"
+echo -e "${CM}${BOLD}${DGN}ComfyUI version            : ${BGN}${comfyui_version}${CL}"
+echo -e "${CM}${BOLD}${DGN}GPU                        : ${BGN}${gpu_type}${CL}"
+echo -e "${CM}${BOLD}${DGN}Python version (uv)        : ${BGN}${python_version_uv}${CL}"
+echo -e "${CM}${BOLD}${DGN}Port                       : ${BGN}${port_arg}${CL}"
+echo -e "${CM}${BOLD}${DGN}ComfyUI python args        : ${BGN}${comfyui_python_args}${CL}"
+echo -e "${CM}${BOLD}${DGN}ComfyUI Manager            : ${BGN}${comfyui_manager_enabled}${CL}"
+echo -e "${CM}${BOLD}${DGN}ComfyUI Manager Version    : ${BGN}${comfyui_manager_version}${CL}"
 
 
 
+# ComfyUI installation start from here!
 # Installs uv
 msg_info "Setup uv"
 PYTHON_VERSION="${python_version_uv}" setup_uv
@@ -286,7 +348,7 @@ if [[ "$gpu_type" == "NVIDIA" ]]; then
       torch \
       torchvision \
       torchaudio \
-      --extra-index-url https://download.pytorch.org/whl/cu128 \
+      --extra-index-url "${comfyui_python_index_url_nvidia}" \
       --python="${python_path}"
 elif [[ "$gpu_type" == "AMD" ]]; then
   echo "AMD selected"
@@ -294,7 +356,7 @@ elif [[ "$gpu_type" == "AMD" ]]; then
       torch \
       torchvision \
       torchaudio \
-      --index-url https://download.pytorch.org/whl/rocm6.3 \
+      --index-url "${comfyui_python_index_url_amd}" \
       --python="${python_path}"
 elif [[ "$gpu_type" == "Intel" ]]; then
   echo "Intel selected"
@@ -302,7 +364,7 @@ elif [[ "$gpu_type" == "Intel" ]]; then
       torch \
       torchvision \
       torchaudio \
-      --index-url https://download.pytorch.org/whl/xpu \
+      --index-url "${comfyui_python_index_url_intel}" \
       --python="${python_path}"
 else
   echo "No GPU selected"
@@ -320,7 +382,6 @@ if [[ "${comfyui_manager_enabled}" == "Y" ]]; then
 else
   msg_error "No installed ${application_name} Manager"
 fi
-
 
 
 
@@ -343,6 +404,8 @@ WantedBy=multi-user.target
 EOF
 systemctl enable -q --now "${application_name}"
 msg_ok "Created Service"
+
+
 
 motd_ssh
 customize
