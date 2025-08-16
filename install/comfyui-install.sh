@@ -322,6 +322,9 @@ if ! [[ "$skip_user_config" =~ ^[Yy]$ ]]; then
   else
     echo "Skipping user config"
 fi
+division_line
+notification
+division_line
 
 
 
