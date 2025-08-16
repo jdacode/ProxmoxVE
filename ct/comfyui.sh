@@ -9,7 +9,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/jdacode/ProxmoxVE/refs/hea
 # Name of the app (e.g. Google, Adventurelog, Apache-Guacamole"
 APP="ComfyUI"
 # Tags for Proxmox VE, maximum 2 pcs., no spaces allowed, separated by a semicolon ; (e.g. database | adblock;dhcp)
-var_tags="${var_tags:-ai;port8080}"
+var_tags="${var_tags:-ai}"
 # Number of cores (1-X) (e.g. 4) - default are 2
 var_cpu="${var_cpu:-4}"
 # Amount of used RAM in MB (e.g. 2048 or 4096)
