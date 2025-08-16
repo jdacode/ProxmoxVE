@@ -289,7 +289,7 @@ notification() {
   echo "${TAB3}comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
   echo "${TAB3}comfyui_manager_enabled=\"${comfyui_manager_enabled}\" \\"
   echo "${TAB3}comfyui_manager_version=\"${comfyui_manager_version}\" \\"
-  echo "${TAB3}bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/jdacode/ProxmoxVE/refs/heads/comfyui/ct/comfyui.sh)\""
+  echo "${TAB3}bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/comfyui.sh)\""
   echo
 }
 
