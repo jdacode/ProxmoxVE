@@ -26,21 +26,28 @@ msg_ok "Installed Dependencies"
 
 
 # Default configuration variables
-comfyui_version="latest"
-gpu_type="None"
-python_version_uv="3.12"
+# NO customizables configuration variables
 application_name="${APPLICATION}"
-port_arg="8080"
-comfyui_python_port_args="--port ${port_arg}"
-comfyui_python_args="--cpu"
-comfyui_manager_enabled="Y"
-comfyui_manager_version="latest"
 app_path="/opt/${application_name}"
 python_path="${app_path}/venv/bin/python"
-comfyui_python_index_url_nvidia="https://download.pytorch.org/whl/cu128"
-comfyui_python_index_url_amd="https://download.pytorch.org/whl/rocm6.3"
-comfyui_python_index_url_intel="https://download.pytorch.org/whl/xpu"
+comfyui_python_port_args="--port ${port_arg}"
+# Customizables configuration variables
 skip_user_config="${skip_user_config:-N}"
+# Versions
+comfyui_version="${comfyui_version:-latest}"
+python_version_uv="${python_version_uv:-3.12}"
+# Python main.py arguments
+port_arg="${port_arg:-8080}"
+comfyui_python_args="${comfyui_python_args:---cpu}"
+# GPU Settings
+gpu_type="${gpu_type:-None}"
+comfyui_python_index_url_nvidia="${comfyui_python_index_url_nvidia:-https://download.pytorch.org/whl/cu128}"
+comfyui_python_index_url_amd="${comfyui_python_index_url_amd:-https://download.pytorch.org/whl/rocm6.3}"
+comfyui_python_index_url_intel="${comfyui_python_index_url_intel:-https://download.pytorch.org/whl/xpu}"
+# ComfyUI Manager
+comfyui_manager_enabled="${comfyui_manager_enabled:-Y}"
+comfyui_manager_version="${comfyui_manager_version:-latest}"
+
 
 
 
@@ -266,8 +273,32 @@ advanced_config() {
 }
 
 
+# Notification
+notification() {
+  echo
+  echo "${TAB3}You can always skip and set up the configuration using dynamic variables, such as:"
+  echo
+  echo "${TAB3}skip_user_config=\"${skip_user_config}\" \\"
+  echo "${TAB3}comfyui_version=\"${comfyui_version}\" \\"
+  echo "${TAB3}python_version_uv=\"${python_version_uv}\" \\"
+  echo "${TAB3}port_arg=\"${port_arg}\" \\"
+  echo "${TAB3}comfyui_python_args=\"${comfyui_python_args}\" \\"
+  echo "${TAB3}gpu_type=\"${gpu_type}\" \\"
+  echo "${TAB3}comfyui_python_index_url_nvidia=\"${comfyui_python_index_url_nvidia}\" \\"
+  echo "${TAB3}comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
+  echo "${TAB3}comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
+  echo "${TAB3}comfyui_manager_enabled=\"${comfyui_manager_enabled}\" \\"
+  echo "${TAB3}comfyui_manager_version=\"${comfyui_manager_version}\" \\"
+  echo "${TAB3}bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/jdacode/ProxmoxVE/refs/heads/comfyui/ct/comfyui.sh)\""
+  echo
+}
+
+
 
 # User configuration menu
+division_line
+notification
+division_line
 if ! [[ "$skip_user_config" =~ ^[Yy]$ ]]; then
   # Basic config
   msg_info "${application_name} configuration"
@@ -295,14 +326,21 @@ fi
 
 
 # Display current configuration variables
+echo -e "${CM}${BOLD}${DGN}Skip User Config           : ${BGN}${skip_user_config}${CL}"
 echo -e "${CM}${BOLD}${DGN}Application name           : ${BGN}${application_name}${CL}"
+echo -e "${CM}${BOLD}${DGN}Application path           : ${BGN}${app_path}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI version            : ${BGN}${comfyui_version}${CL}"
 echo -e "${CM}${BOLD}${DGN}GPU                        : ${BGN}${gpu_type}${CL}"
-echo -e "${CM}${BOLD}${DGN}Python version (uv)        : ${BGN}${python_version_uv}${CL}"
 echo -e "${CM}${BOLD}${DGN}Port                       : ${BGN}${port_arg}${CL}"
-echo -e "${CM}${BOLD}${DGN}ComfyUI python args        : ${BGN}${comfyui_python_args}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI Manager            : ${BGN}${comfyui_manager_enabled}${CL}"
 echo -e "${CM}${BOLD}${DGN}ComfyUI Manager Version    : ${BGN}${comfyui_manager_version}${CL}"
+echo -e "${CM}${BOLD}${DGN}Python version (uv)        : ${BGN}${python_version_uv}${CL}"
+echo -e "${CM}${BOLD}${DGN}Python path (uv)           : ${BGN}${python_path}${CL}"
+echo -e "${CM}${BOLD}${DGN}ComfyUI python args        : ${BGN}${comfyui_python_args}${CL}"
+echo -e "${CM}${BOLD}${DGN}Pip Nvidia index-url       : ${BGN}${comfyui_python_index_url_nvidia}${CL}"
+echo -e "${CM}${BOLD}${DGN}Pip AMD index-url          : ${BGN}${comfyui_python_index_url_amd}${CL}"
+echo -e "${CM}${BOLD}${DGN}Pip Intel index-url        : ${BGN}${comfyui_python_index_url_intel}${CL}"
+echo -e "${CM}${BOLD}${DGN}Preview ExecStart command  : ${BGN}main.py --listen ${comfyui_python_port_args} ${comfyui_python_args}{CL}"
 
 
 
