@@ -276,20 +276,20 @@ advanced_config() {
 # Notification
 notification() {
   echo
-  echo "${TAB3}You can always skip and set up the configuration using dynamic variables, such as:"
+  echo "${TAB3}${INFO} You can always skip and set up the configuration using dynamic variables, such as:"
   echo
-  echo "${TAB3}skip_user_config=\"${skip_user_config}\" \\"
-  echo "${TAB3}comfyui_version=\"${comfyui_version}\" \\"
-  echo "${TAB3}python_version_uv=\"${python_version_uv}\" \\"
-  echo "${TAB3}port_arg=\"${port_arg}\" \\"
-  echo "${TAB3}comfyui_python_args=\"${comfyui_python_args}\" \\"
-  echo "${TAB3}gpu_type=\"${gpu_type}\" \\"
-  echo "${TAB3}comfyui_python_index_url_nvidia=\"${comfyui_python_index_url_nvidia}\" \\"
-  echo "${TAB3}comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
-  echo "${TAB3}comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
-  echo "${TAB3}comfyui_manager_enabled=\"${comfyui_manager_enabled}\" \\"
-  echo "${TAB3}comfyui_manager_version=\"${comfyui_manager_version}\" \\"
-  echo "${TAB3}bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/comfyui.sh)\""
+  echo "${TAB3}${GN}skip_user_config=\"${skip_user_config}\" \\"
+  echo "${TAB3}${GN}comfyui_version=\"${comfyui_version}\" \\"
+  echo "${TAB3}${GN}python_version_uv=\"${python_version_uv}\" \\"
+  echo "${TAB3}${GN}port_arg=\"${port_arg}\" \\"
+  echo "${TAB3}${GN}comfyui_python_args=\"${comfyui_python_args}\" \\"
+  echo "${TAB3}${GN}gpu_type=\"${gpu_type}\" \\"
+  echo "${TAB3}${GN}comfyui_python_index_url_nvidia=\"${comfyui_python_index_url_nvidia}\" \\"
+  echo "${TAB3}${GN}comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
+  echo "${TAB3}${GN}comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
+  echo "${TAB3}${GN}comfyui_manager_enabled=\"${comfyui_manager_enabled}\" \\"
+  echo "${TAB3}${GN}comfyui_manager_version=\"${comfyui_manager_version}\" \\"
+  echo "${TAB3}${GN}bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/comfyui.sh)\""
   echo
 }
 
