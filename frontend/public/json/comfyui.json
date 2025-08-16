@@ -8,7 +8,7 @@
     "type": "ct",
     "updateable": true,
     "privileged": false,
-    "interface_port": 8080,
+    "interface_port": 8188,
     "documentation": "https://github.com/comfyanonymous/ComfyUI",
     "website": "https://www.comfy.org/",
     "logo": "https://framerusercontent.com/images/3cNQMWKzIhIrQ5KErBm7dSmbd2w.png",

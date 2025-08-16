@@ -30,14 +30,15 @@ msg_ok "Installed Dependencies"
 application_name="${APPLICATION}"
 app_path="/opt/${application_name}"
 python_path="${app_path}/venv/bin/python"
-comfyui_python_port_args="--port ${port_arg}"
+
 # Customizables configuration variables
 skip_user_config="${skip_user_config:-N}"
 # Versions
 comfyui_version="${comfyui_version:-latest}"
 python_version_uv="${python_version_uv:-3.12}"
 # Python main.py arguments
-port_arg="${port_arg:-8080}"
+port_arg="${port_arg:-8188}"
+comfyui_python_port_args="--port ${port_arg}"
 comfyui_python_args="${comfyui_python_args:---cpu}"
 # GPU Settings
 gpu_type="${gpu_type:-None}"
