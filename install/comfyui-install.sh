@@ -38,6 +38,7 @@ comfyui_version="${comfyui_version:-latest}"
 python_version_uv="${python_version_uv:-3.12}"
 # Python main.py arguments
 port_arg="${port_arg:-8188}"
+comfyui_python_net_args="--listen"
 comfyui_python_port_args="--port ${port_arg}"
 comfyui_python_args="${comfyui_python_args:---cpu}"
 # GPU Settings
@@ -64,7 +65,7 @@ current_settings_info() {
   echo "${TAB3}${TAB3}${TAB3}ComfyUI python args        : ${comfyui_python_args}"
   echo "${TAB3}${TAB3}${TAB3}ComfyUI Manager            : ${comfyui_manager_enabled}"
   echo "${TAB3}${TAB3}${TAB3}ComfyUI Manager Version    : ${comfyui_manager_version}"
-  echo "${TAB3}${TAB3}${TAB3}Preview ExecStart command  : main.py --listen ${comfyui_python_port_args} ${comfyui_python_args}"
+  echo "${TAB3}${TAB3}${TAB3}Preview ExecStart command  : main.py ${comfyui_python_net_args} ${comfyui_python_port_args} ${comfyui_python_args}"
   echo
 }
 
@@ -344,7 +345,7 @@ echo -e "${CM}${BOLD}${DGN}ComfyUI python args        : ${BGN}${comfyui_python_a
 echo -e "${CM}${BOLD}${DGN}Pip Nvidia index-url       : ${BGN}${comfyui_python_index_url_nvidia}${CL}"
 echo -e "${CM}${BOLD}${DGN}Pip AMD index-url          : ${BGN}${comfyui_python_index_url_amd}${CL}"
 echo -e "${CM}${BOLD}${DGN}Pip Intel index-url        : ${BGN}${comfyui_python_index_url_intel}${CL}"
-echo -e "${CM}${BOLD}${DGN}Preview ExecStart command  : ${BGN}main.py --listen ${comfyui_python_port_args} ${comfyui_python_args}{CL}"
+echo -e "${CM}${BOLD}${DGN}Preview ExecStart command  : ${BGN}main.py ${comfyui_python_net_args} ${comfyui_python_port_args} ${comfyui_python_args}{CL}"
 
 
 
@@ -438,7 +439,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=${app_path}
-ExecStart=${python_path} ${app_path}/main.py --listen ${comfyui_python_port_args} ${comfyui_python_args}
+ExecStart=${python_path} ${app_path}/main.py ${comfyui_python_net_args} ${comfyui_python_port_args} ${comfyui_python_args}
 Restart=on-failure
 
 [Install]
