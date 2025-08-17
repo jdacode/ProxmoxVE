@@ -316,9 +316,14 @@ notification2() {
   echo "port_arg=\"${port_arg}\" \\"
   echo "comfyui_python_args=\"${comfyui_python_args}\" \\"
   echo "gpu_type=\"${gpu_type}\" \\"
-  echo "comfyui_python_index_url_nvidia=\"${comfyui_python_index_url_nvidia}\" \\"
-  echo "comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
-  echo "comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
+  gpu_type_noti="${gpu_type,,}"
+  if [[ "$gpu_type_noti" == "nvidia" ]]; then
+    echo "comfyui_python_index_url_nvidia=\"${comfyui_python_index_url_nvidia}\" \\"
+  elif [[ "$gpu_type_noti" == "intel" ]]; then
+    echo "comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
+  elif [[ "$gpu_type_noti" == "amd" ]]; then
+    echo "comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
+  fi
   echo "comfyui_manager_enabled=\"${comfyui_manager_enabled}\" \\"
   echo "comfyui_manager_version=\"${comfyui_manager_version}\" \\"
   echo "bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/comfyui.sh)\""
@@ -352,7 +357,7 @@ if ! [[ "$skip_user_config" =~ ^[Yy]$ ]]; then
   done
   msg_ok "${application_name} configuration"
   division_line
-  notification
+  notification2
   division_line
   else
     echo "Skipping user config"
