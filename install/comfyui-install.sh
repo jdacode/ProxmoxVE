@@ -108,6 +108,7 @@ select_gpu_type() {
 # ComfyUI version
 set_comfyui_version() {
   while true; do
+    echo
     read -re -i "${comfyui_version}" -p  "${TAB3}${TAB3}Enter ComfyUI version (e.g. v0.3.49 or 'latest') [Current: ${comfyui_version}]: " input_version
     input_version=${input_version:-$comfyui_version}
     if [[ "$input_version" == "latest" || "$input_version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -132,6 +133,7 @@ set_python_version() {
 # Port number
 set_port_number() {
   while true; do
+    echo
     read -re -i "${port_arg}" -p "${TAB3}${TAB3}Enter port number [Current: ${port_arg}]: " input_port
     input_port=${input_port:-$port_arg}
     if [[ "$input_port" =~ ^[0-9]+$ ]]; then
@@ -157,6 +159,7 @@ set_comfyui_args() {
 # Set ComfyUI manager
 set_comfyui_manager() {
   while true; do
+    echo
     read -re -i "${comfyui_manager_enabled}" -p "${TAB3}${TAB3}Enable ComfyUI-Manager? [Y/n] (Current: ${comfyui_manager_enabled}): " input_manager
     input_manager=${input_manager:-$comfyui_manager_enabled}
     case "${input_manager,,}" in
@@ -181,6 +184,7 @@ set_comfyui_manager() {
 set_comfyui_manager_version() {
   if [[ "${comfyui_manager_enabled}" == "Y" ]]; then
     while true; do
+      echo
       read -re -i "${comfyui_manager_version}" -p  "${TAB3}${TAB3}Enter ComfyUI Manager version (e.g. 3.35 or 'latest' <Note:latest='git clone repo'>) [Current: ${comfyui_manager_version}]: " input_version
       input_version=${input_version:-$comfyui_manager_version}
       if [[ "$input_version" == "latest" || "$input_version" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
@@ -305,10 +309,10 @@ notification() {
 }
 
 
-# Notification
+# Notification2
 notification2() {
   echo
-  echo "You can always skip manual configuration by using dynamic variables. For example:"
+  echo "You can reuse the same configuration by defining dynamic variables, using the following command:"
   echo
   echo "skip_user_config=\"Y\" \\"
   echo "comfyui_version=\"${comfyui_version}\" \\"
@@ -319,9 +323,9 @@ notification2() {
   gpu_type_noti="${gpu_type,,}"
   if [[ "$gpu_type_noti" == "nvidia" ]]; then
     echo "comfyui_python_index_url_nvidia=\"${comfyui_python_index_url_nvidia}\" \\"
-  elif [[ "$gpu_type_noti" == "intel" ]]; then
-    echo "comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
   elif [[ "$gpu_type_noti" == "amd" ]]; then
+    echo "comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
+  elif [[ "$gpu_type_noti" == "intel" ]]; then
     echo "comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
   fi
   echo "comfyui_manager_enabled=\"${comfyui_manager_enabled}\" \\"
