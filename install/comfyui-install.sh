@@ -278,20 +278,20 @@ advanced_config() {
 # Notification
 notification() {
   echo
-  echo "${TAB3}${INFO} You can always skip and set up the configuration using dynamic variables, such as:"
+  echo "You can always skip manual configuration by using dynamic variables. For example:"
   echo
-  echo "${TAB3}${GN}skip_user_config=\"${skip_user_config}\" \\"
-  echo "${TAB3}${GN}comfyui_version=\"${comfyui_version}\" \\"
-  echo "${TAB3}${GN}python_version_uv=\"${python_version_uv}\" \\"
-  echo "${TAB3}${GN}port_arg=\"${port_arg}\" \\"
-  echo "${TAB3}${GN}comfyui_python_args=\"${comfyui_python_args}\" \\"
-  echo "${TAB3}${GN}gpu_type=\"${gpu_type}\" \\"
-  echo "${TAB3}${GN}comfyui_python_index_url_nvidia=\"${comfyui_python_index_url_nvidia}\" \\"
-  echo "${TAB3}${GN}comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
-  echo "${TAB3}${GN}comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
-  echo "${TAB3}${GN}comfyui_manager_enabled=\"${comfyui_manager_enabled}\" \\"
-  echo "${TAB3}${GN}comfyui_manager_version=\"${comfyui_manager_version}\" \\"
-  echo "${TAB3}${GN}bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/comfyui.sh)\""
+  echo "skip_user_config=\"${skip_user_config}\" \\"
+  echo "comfyui_version=\"${comfyui_version}\" \\"
+  echo "python_version_uv=\"${python_version_uv}\" \\"
+  echo "port_arg=\"${port_arg}\" \\"
+  echo "comfyui_python_args=\"${comfyui_python_args}\" \\"
+  echo "gpu_type=\"${gpu_type}\" \\"
+  echo "comfyui_python_index_url_nvidia=\"${comfyui_python_index_url_nvidia}\" \\"
+  echo "comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
+  echo "comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
+  echo "comfyui_manager_enabled=\"${comfyui_manager_enabled}\" \\"
+  echo "comfyui_manager_version=\"${comfyui_manager_version}\" \\"
+  echo "bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/comfyui.sh)\""
   echo
 }
 
@@ -321,12 +321,12 @@ if ! [[ "$skip_user_config" =~ ^[Yy]$ ]]; then
     fi
   done
   msg_ok "${application_name} configuration"
+  division_line
+  notification
+  division_line
   else
     echo "Skipping user config"
 fi
-division_line
-notification
-division_line
 
 
 
@@ -345,7 +345,7 @@ echo -e "${CM}${BOLD}${DGN}ComfyUI python args        : ${BGN}${comfyui_python_a
 echo -e "${CM}${BOLD}${DGN}Pip Nvidia index-url       : ${BGN}${comfyui_python_index_url_nvidia}${CL}"
 echo -e "${CM}${BOLD}${DGN}Pip AMD index-url          : ${BGN}${comfyui_python_index_url_amd}${CL}"
 echo -e "${CM}${BOLD}${DGN}Pip Intel index-url        : ${BGN}${comfyui_python_index_url_intel}${CL}"
-echo -e "${CM}${BOLD}${DGN}Preview ExecStart command  : ${BGN}main.py ${comfyui_python_net_args} ${comfyui_python_port_args} ${comfyui_python_args}{CL}"
+echo -e "${CM}${BOLD}${DGN}Preview ExecStart command  : ${BGN}main.py ${comfyui_python_net_args} ${comfyui_python_port_args} ${comfyui_python_args}${CL}"
 
 
 
