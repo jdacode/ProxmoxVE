@@ -26,12 +26,12 @@ msg_ok "Installed Dependencies"
 
 
 # Default configuration variables
-# NO customizables configuration variables
+# NO Configurable variables
 application_name="${APPLICATION}"
 app_path="/opt/${application_name}"
 python_path="${app_path}/venv/bin/python"
 
-# Customizables configuration variables
+# Configurable variables
 skip_user_config="${skip_user_config:-N}"
 # Versions
 comfyui_version="${comfyui_version:-latest}"
@@ -73,6 +73,15 @@ current_settings_info() {
 
 # GPU selection
 select_gpu_type() {
+  # Determine default based on current gpu_type
+  case "${gpu_type}" in
+    "None")   default_choice=1 ;;
+    "NVIDIA") default_choice=2 ;;
+    "AMD")    default_choice=3 ;;
+    "Intel")  default_choice=4 ;;
+    *)        default_choice=1 ;;  # fallback default
+  esac
+
   while true; do
     echo
     echo "${TAB3}${TAB3}Choose the GPU type for ComfyUI:"
@@ -82,9 +91,9 @@ select_gpu_type() {
     echo "${TAB3}${TAB3}${TAB3}  3. AMD"
     echo "${TAB3}${TAB3}${TAB3}  4. Intel"
     echo
-    read -rp "${TAB3}${TAB3}${TAB3}Enter your choice [1-4] (Current: ${gpu_type}): " GPU_CHOICE
-    GPU_CHOICE=${GPU_CHOICE:-1}
-    case "$GPU_CHOICE" in
+    read -rp "${TAB3}${TAB3}${TAB3}Enter your choice [1-4] (Current: ${default_choice}. ${gpu_type}): " gpu_choice
+    gpu_choice=${gpu_choice:-$default_choice}
+    case "$gpu_choice" in
       1) gpu_type="None"; break ;;
       2) gpu_type="NVIDIA"; break ;;
       3) gpu_type="AMD"; break ;;
@@ -140,7 +149,7 @@ set_port_number() {
 # ComfyUI arguments
 set_comfyui_args() {
   read -re -i "${comfyui_python_args}" -p "${TAB3}${TAB3}Enter ComfyUI python args. (e.g. --gpu-only) [Current: ${comfyui_python_args}]: " input_args
-  comfyui_python_args=${input_args:-$comfyui_python_args}
+  comfyui_python_args=${input_args}
 }
 
 
@@ -280,7 +289,28 @@ notification() {
   echo
   echo "You can always skip manual configuration by using dynamic variables. For example:"
   echo
-  echo "skip_user_config=\"${skip_user_config}\" \\"
+  echo "skip_user_config=\"Y|y|N|n\" \\"
+  echo "comfyui_version=\"${comfyui_version}\" \\"
+  echo "python_version_uv=\"${python_version_uv}\" \\"
+  echo "port_arg=\"${port_arg}\" \\"
+  echo "comfyui_python_args=\"${comfyui_python_args}\" \\"
+  echo "gpu_type=\"None|NVIDIA|AMD|Intel\" \\"
+  echo "comfyui_python_index_url_nvidia=\"${comfyui_python_index_url_nvidia}\" \\"
+  echo "comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
+  echo "comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
+  echo "comfyui_manager_enabled=\"Y|y|N|n\" \\"
+  echo "comfyui_manager_version=\"${comfyui_manager_version}\" \\"
+  echo "bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/comfyui.sh)\""
+  echo
+}
+
+
+# Notification
+notification2() {
+  echo
+  echo "You can always skip manual configuration by using dynamic variables. For example:"
+  echo
+  echo "skip_user_config=\"Y\" \\"
   echo "comfyui_version=\"${comfyui_version}\" \\"
   echo "python_version_uv=\"${python_version_uv}\" \\"
   echo "port_arg=\"${port_arg}\" \\"
@@ -385,24 +415,25 @@ msg_ok "Installed ComfyUI version: ${RELEASE}"
 # Dependencies
 msg_info "Python dependencies"
 $STD uv venv "${app_path}/venv"
-if [[ "$gpu_type" == "NVIDIA" ]]; then
-  echo "NVIDIA selected"
+gpu_type="${gpu_type,,}"
+if [[ "$gpu_type" == "nvidia" ]]; then
+  echo "NVIDIA GPU selected"
   $STD uv pip install \
       torch \
       torchvision \
       torchaudio \
       --extra-index-url "${comfyui_python_index_url_nvidia}" \
       --python="${python_path}"
-elif [[ "$gpu_type" == "AMD" ]]; then
-  echo "AMD selected"
+elif [[ "$gpu_type" == "amd" ]]; then
+  echo "AMD GPU selected"
   $STD uv pip install \
       torch \
       torchvision \
       torchaudio \
       --index-url "${comfyui_python_index_url_amd}" \
       --python="${python_path}"
-elif [[ "$gpu_type" == "Intel" ]]; then
-  echo "Intel selected"
+elif [[ "$gpu_type" == "intel" ]]; then
+  echo "Intel GPU selected"
   $STD uv pip install \
       torch \
       torchvision \
@@ -418,7 +449,7 @@ msg_ok "Python dependencies"
 
 
 # Comfyui manager installation
-if [[ "${comfyui_manager_enabled}" == "Y" ]]; then
+if [[ "${comfyui_manager_enabled}" =~ ^[Yy]$ ]]; then
   msg_info "Install ${application_name} Manager"
   install_comfyui_manager
   msg_ok "Installed ${application_name} Manager"
