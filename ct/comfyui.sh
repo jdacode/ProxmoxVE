@@ -34,11 +34,11 @@ function update_script() {
   check_container_resources
 
   # Check if installation is present | -f for file, -d for folder
-  if [[ ! -f /opt/ComfyUI ]]; then
+  if [[ ! -f /opt/${APP} ]]; then
     msg_error "No ${APP} Installation Found!"
     exit
   fi
-  msg_error "To update use the ComfyUI Manager."
+  msg_error "To update use the ${APP} Manager."
   exit
 }
 

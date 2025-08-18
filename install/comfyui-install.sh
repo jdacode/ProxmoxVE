@@ -294,7 +294,7 @@ notification() {
   echo "You can always skip manual configuration by using dynamic variables. For example:"
   echo
   echo "skip_user_config=\"Y|y|N|n\" \\"
-  echo "comfyui_version=\"v0.3.49|latest\" \\"
+  echo "comfyui_version=\"latest|v0.3.49\" \\"
   echo "python_version_uv=\"${python_version_uv}\" \\"
   echo "port_arg=\"${port_arg}\" \\"
   echo "comfyui_python_args=\"${comfyui_python_args}\" \\"
@@ -303,7 +303,7 @@ notification() {
   echo "comfyui_python_index_url_amd=\"${comfyui_python_index_url_amd}\" \\"
   echo "comfyui_python_index_url_intel=\"${comfyui_python_index_url_intel}\" \\"
   echo "comfyui_manager_enabled=\"Y|y|N|n\" \\"
-  echo "comfyui_manager_version=\"3.35|latest\" \\"
+  echo "comfyui_manager_version=\"latest|3.35\" \\"
   echo "bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/comfyui.sh)\""
   echo
 }
